@@ -10,11 +10,15 @@ namespace SchoolDisplay
     {
         // configuration values
         string pdfFilePath;
-        int pollingInterval;
+        int pollingInterval;    // in s
+
+        // true if a PDF file is currently displayed, false if not
+        // TODO: check this value when scrolling
+        bool pdfOnScreen = false;
 
         Timer clockTimer;
-
-        bool pdfOnScreen = false;
+        Timer pollingTimer;
+        FileSystemWatcher fsWatcher;
 
         public MainForm()
         {
@@ -28,13 +32,25 @@ namespace SchoolDisplay
                 pdfFilePath = GetSettingsString("PdfFilePath");
                 pollingInterval = GetNonNegativeSettingsInt("PollingInterval");
             }
-            catch (BadConfigException e)
+            catch (BadConfigException ex)
             {
-                ShowError(e.Message);
+                ShowError(ex.Message);
                 return;
             }
 
             LoadPdf();
+
+            try
+            {
+                SetupFileSystemWatcher();
+            }
+            catch (BadConfigException ex)
+            {
+                ShowError(ex.Message);
+                return;
+            }
+
+            SetupPollingTimer();
         }
 
         private void SetupForm()
@@ -70,12 +86,12 @@ namespace SchoolDisplay
         private void SetupClockTimer()
         {
             clockTimer = new Timer();
-            clockTimer.Tick += new EventHandler(OnClockUpdateEvent);
             clockTimer.Interval = 1000;
+            clockTimer.Tick += ClockTimer_Tick;
             clockTimer.Start();
         }
 
-        private void OnClockUpdateEvent(Object source, EventArgs e)
+        private void ClockTimer_Tick(Object source, EventArgs e)
         {
             lblClock.Text = DateTime.Now.ToString("HH:mm:ss");
         }
@@ -139,6 +155,58 @@ namespace SchoolDisplay
             }
 
             HideError();
+        }
+
+        private void SetupFileSystemWatcher()
+        {
+            try
+            {
+                fsWatcher = new FileSystemWatcher(Path.GetDirectoryName(pdfFilePath), Path.GetFileName(pdfFilePath));
+            }
+            catch (Exception ex)
+            {
+                if (ex is ArgumentException
+                    || ex is ArgumentNullException
+                    || ex is PathTooLongException)
+                {
+                    throw new BadConfigException(Properties.Resources.InvalidPathError);
+                }
+            }
+
+            fsWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
+
+            fsWatcher.Changed += FsWatcher_OnChanged;
+            fsWatcher.Created += FsWatcher_OnChanged;
+            fsWatcher.Renamed += FsWatcher_OnChanged;
+            fsWatcher.Deleted += FsWatcher_OnChanged;
+
+            // events will run in the UI thread
+            fsWatcher.SynchronizingObject = this;
+            fsWatcher.EnableRaisingEvents = true;
+        }
+
+        private void SetupPollingTimer()
+        {
+            if (pollingInterval == 0)
+            {
+                // polling disabled
+                return;
+            }
+
+            pollingTimer = new Timer();
+            pollingTimer.Interval = pollingInterval * 1000;
+            pollingTimer.Tick += PollingTimer_Tick;
+            pollingTimer.Start();
+        }
+
+        private void FsWatcher_OnChanged(Object source, FileSystemEventArgs e)
+        {
+            LoadPdf();
+        }
+
+        private void PollingTimer_Tick(object sender, EventArgs e)
+        {
+            LoadPdf();
         }
 
         private void ShowError(string text)

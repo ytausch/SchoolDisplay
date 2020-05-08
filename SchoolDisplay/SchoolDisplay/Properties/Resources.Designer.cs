@@ -91,6 +91,16 @@ namespace SchoolDisplay.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die [Configuration Error]
+        ///PDF file path is invalid. ähnelt.
+        /// </summary>
+        internal static string InvalidPathError {
+            get {
+                return ResourceManager.GetString("InvalidPathError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die No announcements available. ähnelt.
         /// </summary>
         internal static string PdfAccessError {

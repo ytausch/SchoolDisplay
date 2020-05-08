@@ -129,6 +129,10 @@ Could not load configuration file. Please make sure that the configuration (.con
     <value>[Configuration Error]
 Configuration key "{0}" is missing.</value>
   </data>
+  <data name="InvalidPathError" xml:space="preserve">
+    <value>[Configuration Error]
+PDF file path is invalid.</value>
+  </data>
   <data name="PdfAccessError" xml:space="preserve">
     <value>No announcements available.</value>
     <comment>Since this error can occur regularly (e.g. while the PDF is replaced, we do not reveal any technical details.</comment>
