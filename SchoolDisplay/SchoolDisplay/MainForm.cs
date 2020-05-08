@@ -19,7 +19,7 @@ namespace SchoolDisplay
 
         // true if a PDF file is currently displayed, false if not
         bool pdfOnScreen = false;
-        int scrollTop = -10500;      // Keep track of scroll height
+        int scrollTop = 0;      // Keep track of scroll height
 
         Timer clockTimer;
         Timer pollingTimer;
