@@ -13,11 +13,14 @@ namespace SchoolDisplay
 {
     public partial class MainForm : Form
     {
+        Timer clockTimer;
+
         public MainForm()
         {
             InitializeComponent();
 
             SetupForm();
+            SetupClockTimer();
 
             try
             {
@@ -58,18 +61,22 @@ namespace SchoolDisplay
             }
         }
 
+        private void SetupClockTimer()
+        {
+            clockTimer = new Timer();
+            clockTimer.Tick += new EventHandler(OnClockUpdateEvent);
+            clockTimer.Interval = 1000;
+            clockTimer.Start();
+        }
+
+        private void OnClockUpdateEvent(Object source, EventArgs e)
+        {
+            lblClock.Text = DateTime.Now.ToString("HH:mm:ss");
+        }
+
         private string GetPdfPathFromConfig()
         {
-            string pdfPath;
-
-            try
-            {
-                pdfPath = ConfigurationManager.AppSettings.Get("PdfFilePath");
-            }
-            catch (ConfigurationException)
-            {
-                throw new DisplayableException(Properties.Resources.ConfigLoadError);
-            }
+            string pdfPath = GetSettingsItem("PdfFilePath");
 
             if (pdfPath == null)
             {
@@ -77,6 +84,18 @@ namespace SchoolDisplay
             }
 
             return pdfPath;
+        }
+
+        private string GetSettingsItem(string name)
+        {
+            try
+            {
+                return ConfigurationManager.AppSettings.Get(name);
+            }
+            catch (ConfigurationException)
+            {
+                throw new DisplayableException(Properties.Resources.ConfigLoadError);
+            }
         }
 
         private void ShowError(string text)

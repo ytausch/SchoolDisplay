@@ -30,6 +30,7 @@
         {
             this.pdfRenderer = new PdfiumViewer.PdfRenderer();
             this.lblErrors = new System.Windows.Forms.Label();
+            this.lblClock = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // pdfRenderer
@@ -57,11 +58,26 @@
             this.lblErrors.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblErrors.Visible = false;
             // 
+            // lblClock
+            // 
+            this.lblClock.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblClock.AutoSize = true;
+            this.lblClock.BackColor = System.Drawing.Color.White;
+            this.lblClock.Font = new System.Drawing.Font("Microsoft Sans Serif", 42F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblClock.Location = new System.Drawing.Point(432, 355);
+            this.lblClock.Margin = new System.Windows.Forms.Padding(0);
+            this.lblClock.Name = "lblClock";
+            this.lblClock.Size = new System.Drawing.Size(368, 95);
+            this.lblClock.TabIndex = 2;
+            this.lblClock.Text = "00:00:00";
+            this.lblClock.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.lblClock);
             this.Controls.Add(this.lblErrors);
             this.Controls.Add(this.pdfRenderer);
             this.KeyPreview = true;
@@ -69,6 +85,7 @@
             this.Text = "Display";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -76,6 +93,7 @@
 
         private PdfiumViewer.PdfRenderer pdfRenderer;
         private System.Windows.Forms.Label lblErrors;
+        private System.Windows.Forms.Label lblClock;
     }
 }
 
