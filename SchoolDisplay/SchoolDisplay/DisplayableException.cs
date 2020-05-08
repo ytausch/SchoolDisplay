@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SchoolDisplay
 {
-    class DisplayableException : Exception
+    class BadConfigException : Exception
     {
-        public DisplayableException(string message) : base(message)
+        public BadConfigException(string message) : base(message)
         {
         }
     }

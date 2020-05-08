@@ -27,13 +27,14 @@ namespace SchoolDisplay
             {
                 pdfFilePath = GetSettingsString("PdfFilePath");
                 pollingInterval = GetNonNegativeSettingsInt("PollingInterval");
-                LoadPdf();
             }
-            catch (DisplayableException e)
+            catch (BadConfigException e)
             {
                 ShowError(e.Message);
                 return;
             }
+
+            LoadPdf();
         }
 
         private void SetupForm()
@@ -88,12 +89,12 @@ namespace SchoolDisplay
             }
             catch (ConfigurationException)
             {
-                throw new DisplayableException(Properties.Resources.ConfigLoadError);
+                throw new BadConfigException(Properties.Resources.ConfigLoadError);
             }
 
             if (s == null)
             {
-                throw new DisplayableException(String.Format(Properties.Resources.ConfigMissingKeyError, name));
+                throw new BadConfigException(String.Format(Properties.Resources.ConfigMissingKeyError, name));
             }
 
             return s;
@@ -108,7 +109,7 @@ namespace SchoolDisplay
             }
             else
             {
-                throw new DisplayableException(String.Format(Properties.Resources.ConfigInvalidValueError, name));
+                throw new BadConfigException(String.Format(Properties.Resources.ConfigInvalidValueError, name));
             }
         }
 
