@@ -3,7 +3,7 @@ using System;
 using System.Configuration;
 using System.Drawing;
 using System.IO;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 
@@ -19,7 +19,7 @@ namespace SchoolDisplay
 
         // true if a PDF file is currently displayed, false if not
         bool pdfOnScreen = false;
-        int scrollTop = 0;      // Keep track of scroll height
+        int scrollTop = -10500;      // Keep track of scroll height
 
         Timer clockTimer;
         Timer pollingTimer;
@@ -248,7 +248,7 @@ namespace SchoolDisplay
             pdfRenderer.PerformScroll(ScrollAction.Home, Orientation.Vertical);
         }
 
-        private void ScrollOneLine(object sender, EventArgs e)
+        private async void ScrollOneLine(object sender, EventArgs e)
         {
             // Check if pdf loaded successfully
             if (!pdfOnScreen)
@@ -271,9 +271,11 @@ namespace SchoolDisplay
             }
 
             // Sleep and jump back up
-            Thread.Sleep(pauseTime);
+            scrollTimer.Stop();
+            await Task.Delay(pauseTime);
             scrollTop = 0;
             JumpUp();
+            scrollTimer.Start();
         }
     }
 }
