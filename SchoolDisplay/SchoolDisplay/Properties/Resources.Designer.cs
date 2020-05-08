@@ -62,11 +62,40 @@ namespace SchoolDisplay.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die [Configuration Error]
+        ///Configuration value of &quot;{0}&quot; is invalid. ähnelt.
+        /// </summary>
+        internal static string ConfigInvalidValueError {
+            get {
+                return ResourceManager.GetString("ConfigInvalidValueError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die [Configuration Error]
         ///Could not load configuration file. Please make sure that the configuration (.config) file is valid and available. ähnelt.
         /// </summary>
         internal static string ConfigLoadError {
             get {
                 return ResourceManager.GetString("ConfigLoadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die [Configuration Error]
+        ///Configuration key &quot;{0}&quot; is missing. ähnelt.
+        /// </summary>
+        internal static string ConfigMissingKeyError {
+            get {
+                return ResourceManager.GetString("ConfigMissingKeyError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No announcements available. ähnelt.
+        /// </summary>
+        internal static string PdfAccessError {
+            get {
+                return ResourceManager.GetString("PdfAccessError", resourceCulture);
             }
         }
     }

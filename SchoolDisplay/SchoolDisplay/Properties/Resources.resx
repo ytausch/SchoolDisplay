@@ -117,8 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ConfigInvalidValueError" xml:space="preserve">
+    <value>[Configuration Error]
+Configuration value of "{0}" is invalid.</value>
+  </data>
   <data name="ConfigLoadError" xml:space="preserve">
     <value>[Configuration Error]
 Could not load configuration file. Please make sure that the configuration (.config) file is valid and available.</value>
+  </data>
+  <data name="ConfigMissingKeyError" xml:space="preserve">
+    <value>[Configuration Error]
+Configuration key "{0}" is missing.</value>
+  </data>
+  <data name="PdfAccessError" xml:space="preserve">
+    <value>No announcements available.</value>
+    <comment>Since this error can occur regularly (e.g. while the PDF is replaced, we do not reveal any technical details.</comment>
   </data>
 </root>
