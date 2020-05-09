@@ -13,16 +13,19 @@ namespace SchoolDisplay
     {
         // configuration values
         readonly string pdfFilePath;
-        readonly int pollingInterval;    // in s
+        readonly int pollingInterval;    // in ms
         readonly int scrollSpeed;        // in 3px per x ms
         readonly int pauseTime;          // in ms
 
         // true if a PDF file is currently displayed, false if not
         bool pdfOnScreen = false;
-        int scrollTop = 0;      // Keep track of scroll height
+        int scrollTop = 0;              // Keep track of scroll height
+
+        // Environment.TickCount value of last polling event
+        int lastPolling = 0;
 
         Timer clockTimer;
-        Timer pollingTimer;
+        Timer pollingTimer;             // only used in pdf loading error state
         Timer scrollTimer;
         FileSystemWatcher fsWatcher;
 
@@ -36,7 +39,7 @@ namespace SchoolDisplay
             try
             {
                 pdfFilePath = GetSettingsString("PdfFilePath");
-                pollingInterval = GetNonNegativeSettingsInt("PollingInterval");
+                pollingInterval = GetNonNegativeSettingsInt("PollingInterval") * 1000;
                 scrollSpeed = GetNonNegativeSettingsInt("ScrollSpeed");
                 pauseTime = GetNonNegativeSettingsInt("PauseTime");
             }
@@ -151,7 +154,7 @@ namespace SchoolDisplay
 
                 PdfDocument document = PdfDocument.Load(pdfCopy);
                 pdfRenderer.Load(document);
-                setupScrollTimer();
+                SetupScrollTimer();
             }
             catch
             {
@@ -166,7 +169,7 @@ namespace SchoolDisplay
             HideError();
         }
 
-        private void setupScrollTimer()
+        private void SetupScrollTimer()
         {
             scrollTimer = new Timer();
             scrollTimer.Tick += ScrollOneLine;
@@ -211,9 +214,9 @@ namespace SchoolDisplay
             }
 
             pollingTimer = new Timer();
-            pollingTimer.Interval = pollingInterval * 1000;
+            pollingTimer.Interval = pollingInterval;
             pollingTimer.Tick += PollingTimer_Tick;
-            pollingTimer.Start();
+            // do not enable timer: pollingTimer is only used in case of an error
         }
 
         private void FsWatcher_OnChanged(Object source, FileSystemEventArgs e)
@@ -223,6 +226,12 @@ namespace SchoolDisplay
 
         private void PollingTimer_Tick(object sender, EventArgs e)
         {
+            DoPolling();
+        }
+
+        private void DoPolling()
+        {
+            lastPolling = Environment.TickCount;
             LoadPdf();
         }
 
@@ -233,6 +242,12 @@ namespace SchoolDisplay
             lblErrors.Visible = true;
 
             pdfOnScreen = false;
+
+            // pollingTimer will be null if there is a config error
+            if (pollingTimer != null)
+            {
+                pollingTimer.Enabled = true;
+            }
         }
 
         private void HideError()
@@ -241,11 +256,26 @@ namespace SchoolDisplay
             pdfRenderer.Visible = true;
 
             pdfOnScreen = true;
+
+            if (pollingTimer != null)
+            {
+                // when scrolling is active, we handle polling in JumpUpOrReload instead of PollingTimer_Tick.
+                pollingTimer.Enabled = false;
+            }
         }
 
-        private void JumpUp()
+        private void JumpUpOrReload()
         {
-            pdfRenderer.PerformScroll(ScrollAction.Home, Orientation.Vertical);
+            // this is overflow-safe! Environment.TickCount will overflow after around 50 days.
+            if (pollingInterval > 0 && Environment.TickCount - lastPolling >= pollingInterval)
+            {
+                DoPolling();
+            }
+            else
+            {
+                // jump up
+                pdfRenderer.PerformScroll(ScrollAction.Home, Orientation.Vertical);
+            }
         }
 
         private async void ScrollOneLine(object sender, EventArgs e)
@@ -259,8 +289,8 @@ namespace SchoolDisplay
 
             // Jump one unit
             scrollTop -= 1;
-            var test = new PdfRectangle(0, new Rectangle(new Point(1, scrollTop), new Size(1, pdfRenderer.Height)));
-            pdfRenderer.ScrollIntoView(test);
+            var oneBelow = new PdfRectangle(0, new Rectangle(new Point(1, scrollTop), new Size(1, pdfRenderer.Height)));
+            pdfRenderer.ScrollIntoView(oneBelow);
 
             // Check if end of document is reached
             var currentPos = pdfRenderer.DisplayRectangle.Top;
@@ -274,7 +304,7 @@ namespace SchoolDisplay
             scrollTimer.Stop();
             await Task.Delay(pauseTime);
             scrollTop = 0;
-            JumpUp();
+            JumpUpOrReload();
             scrollTimer.Start();
         }
     }
