@@ -49,6 +49,7 @@ namespace SchoolDisplay
                 return;
             }
 
+            SetupScrollTimer();
             LoadPdf();
 
             try
@@ -165,8 +166,8 @@ namespace SchoolDisplay
                 return;
             }
 
-            SetupScrollTimer();
             scrollTop = 0;
+            scrollTimer.Enabled = true;
 
             HideError();
         }
@@ -176,7 +177,7 @@ namespace SchoolDisplay
             scrollTimer = new Timer();
             scrollTimer.Tick += ScrollOneLine;
             scrollTimer.Interval = scrollSpeed;
-            scrollTimer.Enabled = true;
+            // do not enable timer: loadPdf will trigger that
         }
 
         private void SetupFileSystemWatcher()
