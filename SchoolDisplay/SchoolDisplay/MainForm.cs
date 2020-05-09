@@ -166,8 +166,7 @@ namespace SchoolDisplay
                 return;
             }
 
-            scrollTop = 150;
-            scrollTimer.Enabled = true;
+            ResetAndStartScrollTimer();
 
             HideError();
         }
@@ -177,7 +176,13 @@ namespace SchoolDisplay
             scrollTimer = new Timer();
             scrollTimer.Tick += ScrollOneLine;
             scrollTimer.Interval = scrollSpeed;
-            // do not enable timer: loadPdf will trigger that
+            // do not enable timer: loadPdf will trigger that with ResetAndStartScrollTimer()
+        }
+
+        private void ResetAndStartScrollTimer()
+        {
+            scrollTop = 150;
+            scrollTimer.Start();
         }
 
         private void SetupFileSystemWatcher()
@@ -285,6 +290,7 @@ namespace SchoolDisplay
             {
                 // jump up
                 pdfRenderer.PerformScroll(ScrollAction.Home, Orientation.Vertical);
+                ResetAndStartScrollTimer();
             }
         }
 
