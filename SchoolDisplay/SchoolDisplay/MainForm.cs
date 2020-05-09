@@ -166,7 +166,7 @@ namespace SchoolDisplay
                 return;
             }
 
-            scrollTop = 0;
+            scrollTop = 150;
             scrollTimer.Enabled = true;
 
             HideError();
@@ -313,9 +313,7 @@ namespace SchoolDisplay
             // Sleep and jump back up
             scrollTimer.Stop();
             await Task.Delay(pauseTime);
-            scrollTop = 0;
             JumpUpOrReload();
-            scrollTimer.Start();
         }
     }
 }
