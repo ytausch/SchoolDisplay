@@ -154,7 +154,6 @@ namespace SchoolDisplay
 
                 PdfDocument document = PdfDocument.Load(pdfCopy);
                 pdfRenderer.Load(document);
-                SetupScrollTimer();
             }
             catch
             {
@@ -165,6 +164,9 @@ namespace SchoolDisplay
                 ShowError(Properties.Resources.PdfAccessError);
                 return;
             }
+
+            SetupScrollTimer();
+            scrollTop = 0;
 
             HideError();
         }
@@ -190,6 +192,10 @@ namespace SchoolDisplay
                     || ex is PathTooLongException)
                 {
                     throw new BadConfigException(Properties.Resources.InvalidPathError);
+                }
+                else
+                {
+                    throw;
                 }
             }
 
@@ -219,8 +225,11 @@ namespace SchoolDisplay
             // do not enable timer: pollingTimer is only used in case of an error
         }
 
-        private void FsWatcher_OnChanged(Object source, FileSystemEventArgs e)
+        private async void FsWatcher_OnChanged(Object source, FileSystemEventArgs e)
         {
+            // loading the PDF just after the file was changed can fail if write is not completed -> wait 2 sec,
+            // if loading failes anyway, reloading will be handled by pollingTimer.
+            await Task.Delay(2000);
             LoadPdf();
         }
 
