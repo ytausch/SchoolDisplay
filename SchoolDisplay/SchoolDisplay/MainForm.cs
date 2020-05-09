@@ -12,10 +12,10 @@ namespace SchoolDisplay
     public partial class MainForm : Form
     {
         // configuration values
-        string pdfFilePath;
-        int pollingInterval;    // in s
-        int scrollSpeed;        // in 3px per x ms
-        int pauseTime;          // in ms
+        readonly string pdfFilePath;
+        readonly int pollingInterval;    // in s
+        readonly int scrollSpeed;        // in 3px per x ms
+        readonly int pauseTime;          // in ms
 
         // true if a PDF file is currently displayed, false if not
         bool pdfOnScreen = false;
