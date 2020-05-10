@@ -166,8 +166,7 @@ namespace SchoolDisplay
                 return;
             }
 
-            scrollTop = 0;
-            scrollTimer.Enabled = true;
+            ResetAndStartScrollTimer();
 
             HideError();
         }
@@ -177,7 +176,13 @@ namespace SchoolDisplay
             scrollTimer = new Timer();
             scrollTimer.Tick += ScrollOneLine;
             scrollTimer.Interval = scrollSpeed;
-            // do not enable timer: loadPdf will trigger that
+            // do not enable timer: loadPdf will trigger that with ResetAndStartScrollTimer()
+        }
+
+        private void ResetAndStartScrollTimer()
+        {
+            scrollTop = 0;
+            scrollTimer.Start();
         }
 
         private void SetupFileSystemWatcher()
@@ -284,7 +289,9 @@ namespace SchoolDisplay
             else
             {
                 // jump up
-                pdfRenderer.PerformScroll(ScrollAction.Home, Orientation.Vertical);
+                scrollTop = 0;
+                pdfRenderer.SetDisplayRectLocation(new Point(1, scrollTop));
+                ResetAndStartScrollTimer();
             }
         }
 
@@ -299,8 +306,7 @@ namespace SchoolDisplay
 
             // Jump one unit
             scrollTop -= 1;
-            var oneBelow = new PdfRectangle(0, new Rectangle(new Point(1, scrollTop), new Size(1, pdfRenderer.Height)));
-            pdfRenderer.ScrollIntoView(oneBelow);
+            pdfRenderer.SetDisplayRectLocation(new Point(1, scrollTop));
 
             // Check if end of document is reached
             var currentPos = pdfRenderer.DisplayRectangle.Top;
@@ -313,9 +319,7 @@ namespace SchoolDisplay
             // Sleep and jump back up
             scrollTimer.Stop();
             await Task.Delay(pauseTime);
-            scrollTop = 0;
             JumpUpOrReload();
-            scrollTimer.Start();
         }
     }
 }
