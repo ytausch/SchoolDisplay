@@ -181,7 +181,7 @@ namespace SchoolDisplay
 
         private void ResetAndStartScrollTimer()
         {
-            scrollTop = 150;
+            scrollTop = 0;
             scrollTimer.Start();
         }
 
@@ -289,7 +289,8 @@ namespace SchoolDisplay
             else
             {
                 // jump up
-                pdfRenderer.PerformScroll(ScrollAction.Home, Orientation.Vertical);
+                scrollTop = 0;
+                pdfRenderer.SetDisplayRectLocation(new Point(1, scrollTop));
                 ResetAndStartScrollTimer();
             }
         }
@@ -305,8 +306,7 @@ namespace SchoolDisplay
 
             // Jump one unit
             scrollTop -= 1;
-            var oneBelow = new PdfRectangle(0, new Rectangle(new Point(1, scrollTop), new Size(1, pdfRenderer.Height)));
-            pdfRenderer.ScrollIntoView(oneBelow);
+            pdfRenderer.SetDisplayRectLocation(new Point(1, scrollTop));
 
             // Check if end of document is reached
             var currentPos = pdfRenderer.DisplayRectangle.Top;
