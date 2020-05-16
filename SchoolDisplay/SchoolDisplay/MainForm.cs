@@ -2,6 +2,7 @@
 using System;
 using System.Configuration;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,9 +14,13 @@ namespace SchoolDisplay
     {
         // configuration values
         readonly string pdfFilePath;
-        readonly int pollingInterval;    // in ms
-        readonly int scrollSpeed;        // in 3px per x ms
-        readonly int pauseTime;          // in ms
+        readonly int pollingInterval;   // in ms
+        readonly int scrollSpeed;       // in 3px per x ms
+        readonly int pauseTime;         // in ms
+        readonly TimeSpan displayStartTime;
+        readonly TimeSpan displayStopTime;
+        readonly bool displayOnWeekend;
+
 
         // true if a PDF file is currently displayed, false if not
         bool pdfOnScreen = false;
@@ -24,10 +29,14 @@ namespace SchoolDisplay
         // Environment.TickCount value of last polling event
         int lastPolling = 0;
 
+        // Keeps track of display state
+        bool displayActive = true;
+
         Timer clockTimer;
         Timer pollingTimer;             // only used in pdf loading error state
         Timer scrollTimer;
         FileSystemWatcher fsWatcher;
+        DisplayStatusHandler displayStatusHandler;
 
         public MainForm()
         {
@@ -42,6 +51,9 @@ namespace SchoolDisplay
                 pollingInterval = GetNonNegativeSettingsInt("PollingInterval") * 1000;
                 scrollSpeed = GetNonNegativeSettingsInt("ScrollSpeed");
                 pauseTime = GetNonNegativeSettingsInt("PauseTime");
+                displayStartTime = GetSettingsTimeFrame("DisplayStartTime");
+                displayStopTime = GetSettingsTimeFrame("DisplayStopTime");
+                displayOnWeekend = GetSettingsBool("ActiveOnWeekends");
             }
             catch (BadConfigException ex)
             {
@@ -51,6 +63,7 @@ namespace SchoolDisplay
 
             SetupScrollTimer();
             LoadPdf();
+            displayStatusHandler = new DisplayStatusHandler(this.Handle.ToInt32(), displayStartTime, displayStopTime, displayOnWeekend);
 
             try
             {
@@ -139,6 +152,24 @@ namespace SchoolDisplay
             {
                 throw new BadConfigException(String.Format(Properties.Resources.ConfigInvalidValueError, name));
             }
+        }
+
+        private bool GetSettingsBool(string name)
+        {
+            if (bool.TryParse(GetSettingsString(name), out bool b))
+                return b;
+
+            throw new BadConfigException(String.Format(Properties.Resources.ConfigInvalidValueError, name));
+        }
+
+        private TimeSpan GetSettingsTimeFrame(string name)
+        {
+            string s = GetSettingsString(name);
+            if (DateTime.TryParseExact(s, "HH:mm", null, DateTimeStyles.None, out DateTime span)) { 
+                return span.TimeOfDay;
+            }                
+
+            throw new BadConfigException(String.Format(Properties.Resources.ConfigInvalidValueError, name));
         }
 
         private void LoadPdf()
