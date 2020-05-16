@@ -11,6 +11,7 @@ namespace SchoolDisplay
         private const int SC_MONITORPOWER = 0xF170;
         private const int DISPLAY_ON = -1;
         private const int DISPLAY_OFF = 2;
+        private const int MOUSEEVENTF_MOVE = 0x0001;
 
         // Settings
         private readonly TimeSpan StartTime;
@@ -37,12 +38,22 @@ namespace SchoolDisplay
 
         private void SetDisplayStatus(int status)
         {
-            SendMessage(WindowHandle, WM_SYSCOMMAND, SC_MONITORPOWER, status);
+            if (status == DISPLAY_ON)
+            {
+                MouseEvent(MOUSEEVENTF_MOVE, 0, 1, 0, UIntPtr.Zero);
+            }
+            else
+            {
+                SendMessage(WindowHandle, WM_SYSCOMMAND, SC_MONITORPOWER, status);
+            }
             CurrentStatus = status;
         }
 
         [DllImport("user32.dll")]
         private static extern int SendMessage(int hWnd, int hMsg, int wParam, int lParam);
+        [DllImport("user32.dll")]
+        static extern void MouseEvent(Int32 dwFlags, Int32 dx, Int32 dy, Int32 dwData, UIntPtr dwExtraInfo);
+
 
         private void SetupDisplayTimer()
         {
