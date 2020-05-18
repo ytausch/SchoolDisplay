@@ -11,21 +11,15 @@ namespace SchoolDisplay
 {
     public partial class MainForm : Form
     {
-        // configuration values
-        readonly string pdfFilePath;
-        readonly int pollingInterval;    // in ms
+        /* configuration values */
+        readonly string pdfDirectoryPath;
         readonly int scrollSpeed;        // in 3px per x ms
         readonly int pauseTime;          // in ms
 
-        // true if a PDF file is currently displayed, false if not
-        bool pdfOnScreen = false;
+        bool pdfOnScreen = false;       // true if a PDF file is currently displayed, false if not
         int scrollTop = 0;              // Keep track of scroll height
 
-        // Environment.TickCount value of last polling event
-        int lastPolling = 0;
-
         Timer clockTimer;
-        Timer pollingTimer;             // only used in pdf loading error state
         Timer scrollTimer;
         FileSystemWatcher fsWatcher;
 
@@ -38,8 +32,8 @@ namespace SchoolDisplay
 
             try
             {
-                pdfFilePath = GetSettingsString("PdfFilePath");
-                pollingInterval = GetNonNegativeSettingsInt("PollingInterval") * 1000;
+                // TODO: Move settings methods to static SettingsHelper class
+                pdfDirectoryPath = GetSettingsString("PdfDirectoryPath");
                 scrollSpeed = GetNonNegativeSettingsInt("ScrollSpeed");
                 pauseTime = GetNonNegativeSettingsInt("PauseTime");
             }
@@ -148,7 +142,7 @@ namespace SchoolDisplay
 
             try
             {
-                using (FileStream fs = File.OpenRead(pdfFilePath))
+                using (FileStream fs = File.OpenRead(pdfDirectoryPath))
                 {
                     fs.CopyTo(pdfCopy);
                 }
@@ -189,7 +183,7 @@ namespace SchoolDisplay
         {
             try
             {
-                fsWatcher = new FileSystemWatcher(Path.GetDirectoryName(pdfFilePath), Path.GetFileName(pdfFilePath));
+                fsWatcher = new FileSystemWatcher(Path.GetDirectoryName(pdfDirectoryPath), Path.GetFileName(pdfDirectoryPath));
             }
             catch (Exception ex)
             {
@@ -217,20 +211,6 @@ namespace SchoolDisplay
             fsWatcher.EnableRaisingEvents = true;
         }
 
-        private void SetupPollingTimer()
-        {
-            if (pollingInterval == 0)
-            {
-                // polling disabled
-                return;
-            }
-
-            pollingTimer = new Timer();
-            pollingTimer.Interval = pollingInterval;
-            pollingTimer.Tick += PollingTimer_Tick;
-            // do not enable timer: pollingTimer is only used in case of an error
-        }
-
         private async void FsWatcher_OnChanged(Object source, FileSystemEventArgs e)
         {
             // loading the PDF just after the file was changed can fail if write is not completed -> wait 2 sec,
@@ -239,16 +219,6 @@ namespace SchoolDisplay
             LoadPdf();
         }
 
-        private void PollingTimer_Tick(object sender, EventArgs e)
-        {
-            DoPolling();
-        }
-
-        private void DoPolling()
-        {
-            lastPolling = Environment.TickCount;
-            LoadPdf();
-        }
 
         private void ShowError(string text)
         {
@@ -257,12 +227,6 @@ namespace SchoolDisplay
             lblErrors.Visible = true;
 
             pdfOnScreen = false;
-
-            // pollingTimer will be null if there is a config error
-            if (pollingTimer != null)
-            {
-                pollingTimer.Enabled = true;
-            }
         }
 
         private void HideError()
@@ -271,12 +235,6 @@ namespace SchoolDisplay
             pdfRenderer.Visible = true;
 
             pdfOnScreen = true;
-
-            if (pollingTimer != null)
-            {
-                // when scrolling is active, we handle polling in JumpUpOrReload instead of PollingTimer_Tick.
-                pollingTimer.Enabled = false;
-            }
         }
 
         private void JumpUpOrReload()
