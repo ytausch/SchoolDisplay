@@ -17,6 +17,7 @@ namespace SchoolDisplay
         private readonly TimeSpan StartTime;
         private readonly TimeSpan StopTime;
         private readonly bool DisplayActiveOnWeekend;
+        private readonly bool AlwaysOn;
 
         // Other
         private readonly int WindowHandle;
@@ -25,22 +26,26 @@ namespace SchoolDisplay
         // Status
         private int CurrentStatus;
 
-        public DisplayStatusHandler(int windowHandle, TimeSpan startTime, TimeSpan stopTime, bool displayActiveOnWeekend)
+        public DisplayStatusHandler(int windowHandle, bool alwaysOn, TimeSpan startTime, TimeSpan stopTime, bool displayActiveOnWeekend)
         {
             WindowHandle = windowHandle;
             StartTime = startTime;
             StopTime = stopTime;
             DisplayActiveOnWeekend = displayActiveOnWeekend;
+            AlwaysOn = alwaysOn;
 
-            SetupDisplayTimer();
-            SetDisplayStatus(determineRequiredStatus()); // Set Initial Status
+            if (!AlwaysOn)
+            {
+                SetupDisplayTimer();
+                SetDisplayStatus(determineRequiredStatus()); // Set Initial Status
+            }
         }
 
         private void SetDisplayStatus(int status)
         {
             if (status == DISPLAY_ON)
             {
-                MouseEvent(MOUSEEVENTF_MOVE, 0, 1, 0, UIntPtr.Zero);
+                mouse_event(MOUSEEVENTF_MOVE, 0, 1, 0, UIntPtr.Zero);
             }
             else
             {
@@ -52,7 +57,7 @@ namespace SchoolDisplay
         [DllImport("user32.dll")]
         private static extern int SendMessage(int hWnd, int hMsg, int wParam, int lParam);
         [DllImport("user32.dll")]
-        static extern void MouseEvent(Int32 dwFlags, Int32 dx, Int32 dy, Int32 dwData, UIntPtr dwExtraInfo);
+        static extern void mouse_event(Int32 dwFlags, Int32 dx, Int32 dy, Int32 dwData, UIntPtr dwExtraInfo);
 
 
         private void SetupDisplayTimer()

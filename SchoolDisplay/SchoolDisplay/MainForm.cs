@@ -17,6 +17,7 @@ namespace SchoolDisplay
         readonly int pollingInterval;   // in ms
         readonly int scrollSpeed;       // in 3px per x ms
         readonly int pauseTime;         // in ms
+        readonly bool displayAlwaysOn;
         readonly TimeSpan displayStartTime;
         readonly TimeSpan displayStopTime;
         readonly bool displayOnWeekend;
@@ -51,6 +52,7 @@ namespace SchoolDisplay
                 pollingInterval = GetNonNegativeSettingsInt("PollingInterval") * 1000;
                 scrollSpeed = GetNonNegativeSettingsInt("ScrollSpeed");
                 pauseTime = GetNonNegativeSettingsInt("PauseTime");
+                displayAlwaysOn = GetSettingsBool("DisplayAlwaysOn");
                 displayStartTime = GetSettingsTimeFrame("DisplayStartTime");
                 displayStopTime = GetSettingsTimeFrame("DisplayStopTime");
                 displayOnWeekend = GetSettingsBool("ActiveOnWeekends");
@@ -63,7 +65,7 @@ namespace SchoolDisplay
 
             SetupScrollTimer();
             LoadPdf();
-            displayStatusHandler = new DisplayStatusHandler(this.Handle.ToInt32(), displayStartTime, displayStopTime, displayOnWeekend);
+            displayStatusHandler = new DisplayStatusHandler(this.Handle.ToInt32(), displayAlwaysOn, displayStartTime, displayStopTime, displayOnWeekend);
 
             try
             {
