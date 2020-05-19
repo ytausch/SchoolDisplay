@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace SchoolDisplay
 {
     /// <summary>
-    /// A class representing our PDF file storage.
+    /// A class representing a PDF file storage.
     /// </summary>
     public class PdfRepository
     {
@@ -22,7 +22,7 @@ namespace SchoolDisplay
             }
             else
             {
-                throw new DirectoryNotFoundException($"Directory {directoryPath} does not exist.");
+                throw new DirectoryNotFoundException($"Directory {directoryPath} is invalid or does not exist.");
             }
         }
 
@@ -37,17 +37,17 @@ namespace SchoolDisplay
         }
 
         /// <summary>
-        /// Retrieves a PdfDocument by its file name asynchronously by copying it into RAM.
+        /// Retrieves a PdfDocument by its file name by copying it into RAM.
         /// </summary>
         /// <param name="fileName">The PDF file name.</param>
         /// <returns>A PdfDocument representing the PDF file.</returns>
-        public async Task<PdfDocument> GetDocumentAsync(string fileName)
+        public PdfDocument GetDocument(string fileName)
         {
             MemoryStream pdfCopy = new MemoryStream();
 
             using (FileStream fs = File.OpenRead(Path.Combine(directoryPath, fileName)))
             {
-                await fs.CopyToAsync(pdfCopy);
+                fs.CopyTo(pdfCopy);
             }
 
             return PdfDocument.Load(pdfCopy);

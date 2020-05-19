@@ -11,22 +11,15 @@ namespace SchoolDisplay
         private readonly PdfRepository repository;
 
         private string currentFile;     // the last file that was handed out via GetNextFileName()
-        private Task<PdfDocument> pdfRetrievingTask;
 
         public CyclicPdfService(PdfRepository repository)
         {
             this.repository = repository;
         }
 
-        public async Task<PdfDocument> GetNextDocument()
+        public PdfDocument GetNextDocument()
         {
-            List<string> availableFiles = repository.ListAllFiles();
-
-        }
-
-        private void RetrieveNextDocument()
-        {
-
+            return repository.GetDocument(GetNextFileName());
         }
 
         private string GetNextFileName()

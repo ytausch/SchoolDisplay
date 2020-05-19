@@ -1,5 +1,4 @@
-﻿using PdfiumViewer;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Drawing;
 using System.IO;
@@ -21,7 +20,8 @@ namespace SchoolDisplay
 
         Timer clockTimer;
         Timer scrollTimer;
-        FileSystemWatcher fsWatcher;
+
+        readonly CyclicPdfService pdfService;
 
         public MainForm()
         {
@@ -43,20 +43,18 @@ namespace SchoolDisplay
                 return;
             }
 
-            SetupScrollTimer();
-            LoadPdf();
-
             try
             {
-                SetupFileSystemWatcher();
+                pdfService = new CyclicPdfService(new PdfRepository(pdfDirectoryPath));
             }
-            catch (BadConfigException ex)
+            catch (DirectoryNotFoundException)
             {
-                ShowError(ex.Message);
+                ShowError(Properties.Resources.InvalidPathError);
                 return;
             }
 
-            SetupPollingTimer();
+            SetupScrollTimer();
+            LoadNextPdf();
         }
 
         private void SetupForm()
@@ -135,20 +133,11 @@ namespace SchoolDisplay
             }
         }
 
-        private void LoadPdf()
+        private void LoadNextPdf()
         {
-            // create a copy in RAM to not keep the file open
-            MemoryStream pdfCopy = new MemoryStream();
-
             try
             {
-                using (FileStream fs = File.OpenRead(pdfDirectoryPath))
-                {
-                    fs.CopyTo(pdfCopy);
-                }
-
-                PdfDocument document = PdfDocument.Load(pdfCopy);
-                pdfRenderer.Load(document);
+                pdfRenderer.Load(pdfService.GetNextDocument());
             }
             catch
             {
@@ -156,6 +145,7 @@ namespace SchoolDisplay
                 // we exceptionally catch all of them here for maximum reliability.
 
                 // This is a general error message because we don't want to display technical details publicly.
+                // This line also executes when there is no PDF available.
                 ShowError(Properties.Resources.PdfAccessError);
                 return;
             }
@@ -179,47 +169,6 @@ namespace SchoolDisplay
             scrollTimer.Start();
         }
 
-        private void SetupFileSystemWatcher()
-        {
-            try
-            {
-                fsWatcher = new FileSystemWatcher(Path.GetDirectoryName(pdfDirectoryPath), Path.GetFileName(pdfDirectoryPath));
-            }
-            catch (Exception ex)
-            {
-                if (ex is ArgumentException
-                    || ex is ArgumentNullException
-                    || ex is PathTooLongException)
-                {
-                    throw new BadConfigException(Properties.Resources.InvalidPathError);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            fsWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
-
-            fsWatcher.Changed += FsWatcher_OnChanged;
-            fsWatcher.Created += FsWatcher_OnChanged;
-            fsWatcher.Renamed += FsWatcher_OnChanged;
-            fsWatcher.Deleted += FsWatcher_OnChanged;
-
-            // events will run in the UI thread
-            fsWatcher.SynchronizingObject = this;
-            fsWatcher.EnableRaisingEvents = true;
-        }
-
-        private async void FsWatcher_OnChanged(Object source, FileSystemEventArgs e)
-        {
-            // loading the PDF just after the file was changed can fail if write is not completed -> wait 2 sec,
-            // if loading failes anyway, reloading will be handled by pollingTimer.
-            await Task.Delay(2000);
-            LoadPdf();
-        }
-
-
         private void ShowError(string text)
         {
             pdfRenderer.Visible = false;
@@ -235,22 +184,6 @@ namespace SchoolDisplay
             pdfRenderer.Visible = true;
 
             pdfOnScreen = true;
-        }
-
-        private void JumpUpOrReload()
-        {
-            // this is overflow-safe! Environment.TickCount will overflow after around 50 days.
-            if (pollingInterval > 0 && Environment.TickCount - lastPolling >= pollingInterval)
-            {
-                DoPolling();
-            }
-            else
-            {
-                // jump up
-                scrollTop = 0;
-                pdfRenderer.SetDisplayRectLocation(new Point(1, scrollTop));
-                ResetAndStartScrollTimer();
-            }
         }
 
         private async void ScrollOneLine(object sender, EventArgs e)
@@ -277,7 +210,7 @@ namespace SchoolDisplay
             // Sleep and jump back up
             scrollTimer.Stop();
             await Task.Delay(pauseTime);
-            JumpUpOrReload();
+            LoadNextPdf();
         }
     }
 }
