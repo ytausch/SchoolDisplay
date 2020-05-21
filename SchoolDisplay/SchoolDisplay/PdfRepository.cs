@@ -12,12 +12,18 @@ namespace SchoolDisplay
     public class PdfRepository
     {
         private readonly string directoryPath;
+        private readonly FileSystemWatcher fsWatcher;
+
+        public event EventHandler<ChangedPdfEventArgs> DataChanged;
 
         public PdfRepository(string directoryPath)
         {
             if (Directory.Exists(directoryPath))
             {
                 this.directoryPath = directoryPath;
+
+                fsWatcher = SetupFileSystemWatcher();
+                fsWatcher.EnableRaisingEvents = true;
             }
             else
             {
@@ -79,6 +85,30 @@ namespace SchoolDisplay
             {
                 throw new ArgumentException("PDF file has no pages.");
             }
+        }
+
+        private FileSystemWatcher SetupFileSystemWatcher()
+        {
+            FileSystemWatcher watcher = new FileSystemWatcher(directoryPath, "*.pdf");
+
+            watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite;
+
+            watcher.Changed += FsWatcher_OnChanged;
+            watcher.Created += FsWatcher_OnChanged;
+            watcher.Deleted += FsWatcher_OnChanged;
+            watcher.Renamed += FsWatcher_OnRenamed;
+
+            return watcher;
+        }
+
+        private void FsWatcher_OnChanged(Object source, FileSystemEventArgs e)
+        {
+            DataChanged?.Invoke(this, new ChangedPdfEventArgs(e.Name));
+        }
+
+        private void FsWatcher_OnRenamed(Object source, RenamedEventArgs e)
+        {
+            DataChanged?.Invoke(this, new ChangedPdfEventArgs(e.OldName));
         }
     }
 }

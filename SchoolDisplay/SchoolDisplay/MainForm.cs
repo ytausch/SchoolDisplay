@@ -58,6 +58,8 @@ namespace SchoolDisplay
                 return;
             }
 
+            pdfService.OnInvalidate += PdfService_OnInvalidated;
+
             SetupRetryTimer();
             SetupScrollTimer();
 
@@ -192,6 +194,15 @@ namespace SchoolDisplay
         private void RetryTimer_Tick(object sender, EventArgs e)
         {
             LoadNextPdf();
+        }
+
+        private async void PdfService_OnInvalidated(object sender, EventArgs e)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                // run on UI thread
+                LoadNextPdf();
+            });
         }
 
         private void SetupScrollTimer()
