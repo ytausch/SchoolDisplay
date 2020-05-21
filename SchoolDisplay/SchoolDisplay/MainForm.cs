@@ -14,12 +14,12 @@ namespace SchoolDisplay
         // configuration values
         readonly string pdfFilePath;
         readonly int pollingInterval;    // in ms
-        readonly int scrollSpeed;        // in 3px per x ms
+        readonly float scrollTick;        // in 3px per x ms
         readonly int pauseTime;          // in ms
 
         // true if a PDF file is currently displayed, false if not
         bool pdfOnScreen = false;
-        int scrollTop = 0;              // Keep track of scroll height
+        float scrollTop = 0;              // Keep track of scroll height
 
         // Environment.TickCount value of last polling event
         int lastPolling = 0;
@@ -40,7 +40,7 @@ namespace SchoolDisplay
             {
                 pdfFilePath = GetSettingsString("PdfFilePath");
                 pollingInterval = GetNonNegativeSettingsInt("PollingInterval") * 1000;
-                scrollSpeed = GetNonNegativeSettingsInt("ScrollSpeed");
+                scrollTick = (float) GetNonNegativeSettingsInt("ScrollSpeed")/10;
                 pauseTime = GetNonNegativeSettingsInt("PauseTime");
             }
             catch (BadConfigException ex)
@@ -175,7 +175,7 @@ namespace SchoolDisplay
         {
             scrollTimer = new Timer();
             scrollTimer.Tick += ScrollOneLine;
-            scrollTimer.Interval = scrollSpeed;
+            scrollTimer.Interval = 5;
             // do not enable timer: loadPdf will trigger that with ResetAndStartScrollTimer()
         }
 
@@ -290,7 +290,7 @@ namespace SchoolDisplay
             {
                 // jump up
                 scrollTop = 0;
-                pdfRenderer.SetDisplayRectLocation(new Point(1, scrollTop));
+                pdfRenderer.SetDisplayRectLocation(new Point(1, (int) Math.Round(scrollTop)));
                 ResetAndStartScrollTimer();
             }
         }
@@ -305,8 +305,8 @@ namespace SchoolDisplay
             }
 
             // Jump one unit
-            scrollTop -= 1;
-            pdfRenderer.SetDisplayRectLocation(new Point(1, scrollTop));
+            scrollTop -= scrollTick;
+            pdfRenderer.SetDisplayRectLocation(new Point(1, (int)Math.Round(scrollTop)));
 
             // Check if end of document is reached
             var currentPos = pdfRenderer.DisplayRectangle.Top;
