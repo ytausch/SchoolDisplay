@@ -1,15 +1,15 @@
-﻿using System;
+﻿using PdfiumViewer;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using PdfDocument = PdfiumViewer.PdfDocument;
 
 namespace SchoolDisplay
 {
     /// <summary>
     /// A class representing a PDF file storage.
     /// </summary>
-    public class PdfRepository
+    public class PdfRepository : IPdfRepository
     {
         private readonly string directoryPath;
         private readonly FileSystemWatcher fsWatcher;
@@ -42,12 +42,12 @@ namespace SchoolDisplay
         }
 
         /// <summary>
-        /// Retrieves a PdfDocument by its file name by copying it into RAM.
+        /// Retrieves an IPdfDocument by its file name by copying it into RAM.
         /// </summary>
         /// <param name="fileName">The PDF file name.</param>
-        /// <returns>A PdfDocument representing the PDF file.</returns>
+        /// <returns>An IPdfDocument representing the PDF file.</returns>
         /// <exception cref="PdfAccessException">If something went wrong during PDF access. Contains a data field "fileName".</exception>
-        public PdfDocument GetDocument(string fileName)
+        public IPdfDocument GetDocument(string fileName)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace SchoolDisplay
             }
         }
 
-        private PdfDocument GetDocumentUnsafe(string fileName)
+        private IPdfDocument GetDocumentUnsafe(string fileName)
         {
             MemoryStream pdfCopy = new MemoryStream();
 
@@ -73,13 +73,13 @@ namespace SchoolDisplay
                 fs.CopyTo(pdfCopy);
             }
 
-            PdfDocument document = PdfDocument.Load(pdfCopy);
+            IPdfDocument document = PdfDocument.Load(pdfCopy);
             ValidatePdf(document);
 
             return document;
         }
 
-        private void ValidatePdf(PdfDocument document)
+        private void ValidatePdf(IPdfDocument document)
         {
             if (document.PageCount == 0)
             {

@@ -9,7 +9,7 @@ namespace SchoolDisplay
 {
     public class CyclicPdfService
     {
-        private readonly PdfRepository repository;
+        private readonly IPdfRepository repository;
 
         private string currentFile;     // the last file that was handed out via GetNextFileName()
 
@@ -21,7 +21,7 @@ namespace SchoolDisplay
         public event EventHandler OnInvalidate;
         private bool invalidateInvoked;
 
-        public CyclicPdfService(PdfRepository repository)
+        public CyclicPdfService(IPdfRepository repository)
         {
             this.repository = repository;
             repository.DataChanged += Repository_DataChanged;
@@ -34,7 +34,7 @@ namespace SchoolDisplay
         /// </summary>
         /// <exception cref="FileNotFoundException">If no files are available.</exception>
         /// <exception cref="PdfAccessException">If something went wrong while opening a file.</exception>
-        public PdfDocument GetNextDocument()
+        public IPdfDocument GetNextDocument()
         {
             try
             {

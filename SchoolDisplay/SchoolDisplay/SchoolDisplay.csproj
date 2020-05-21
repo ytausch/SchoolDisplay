@@ -59,6 +59,7 @@
     <Compile Include="ChangedPdfEventArgs.cs" />
     <Compile Include="CyclicPdfService.cs" />
     <Compile Include="Exceptions\BadConfigException.cs" />
+    <Compile Include="IPdfRepository.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
