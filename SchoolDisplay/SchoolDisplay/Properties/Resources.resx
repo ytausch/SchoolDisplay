@@ -133,8 +133,12 @@ Configuration key "{0}" is missing.</value>
     <value>[Configuration Error]
 PDF file path is invalid.</value>
   </data>
-  <data name="PdfAccessError" xml:space="preserve">
+  <data name="NoAnnouncementsAvailable" xml:space="preserve">
     <value>No announcements available.</value>
-    <comment>Since this error can occur regularly (e.g. while the PDF is replaced, we do not reveal any technical details.</comment>
+    <comment>This error will be displayed when the PDF folder is empty.</comment>
+  </data>
+  <data name="PdfAccessError" xml:space="preserve">
+    <value>Error opening "{0}".</value>
+    <comment>This error will be displayed shortly when something went wrong while opening a existing PDF file.</comment>
   </data>
 </root>

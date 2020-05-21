@@ -1,9 +1,8 @@
-﻿using PdfDocument = PdfiumViewer.PdfDocument;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Runtime.InteropServices;
+using PdfDocument = PdfiumViewer.PdfDocument;
 
 namespace SchoolDisplay
 {
@@ -41,7 +40,25 @@ namespace SchoolDisplay
         /// </summary>
         /// <param name="fileName">The PDF file name.</param>
         /// <returns>A PdfDocument representing the PDF file.</returns>
+        /// <exception cref="PdfAccessException">If something went wrong during PDF access. Contains a data field "fileName".</exception>
         public PdfDocument GetDocument(string fileName)
+        {
+            try
+            {
+                return GetDocumentUnsafe(fileName);
+            }
+            catch (Exception e)
+            {
+                // Since a lot of unexcepted Exceptions can happen when opening a PDF file,
+                // we exceptionally catch all of them here for maximum reliability.
+
+                var exception = new PdfAccessException("Error opening PDF file", e);
+                exception.Data.Add("fileName", fileName);
+                throw exception;
+            }
+        }
+
+        private PdfDocument GetDocumentUnsafe(string fileName)
         {
             MemoryStream pdfCopy = new MemoryStream();
 
@@ -50,8 +67,18 @@ namespace SchoolDisplay
                 fs.CopyTo(pdfCopy);
             }
 
-            return PdfDocument.Load(pdfCopy);
+            PdfDocument document = PdfDocument.Load(pdfCopy);
+            ValidatePdf(document);
+
+            return document;
         }
 
+        private void ValidatePdf(PdfDocument document)
+        {
+            if (document.PageCount == 0)
+            {
+                throw new ArgumentException("PDF file has no pages.");
+            }
+        }
     }
 }

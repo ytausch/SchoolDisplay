@@ -17,17 +17,25 @@ namespace SchoolDisplay
             this.repository = repository;
         }
 
+        /// <summary>
+        /// Returns the next PDF document in the cycle.
+        /// Throws exceptions if the PDF document cannot be found or opened.
+        /// </summary>
+        /// <exception cref="FileNotFoundException">If no files are available.</exception>
+        /// <exception cref="PdfAccessException">If something went wrong while opening a file.</exception>
         public PdfDocument GetNextDocument()
         {
             return repository.GetDocument(GetNextFileName());
         }
 
+        /// <exception cref="FileNotFoundException">If no files are available.</exception>
         private string GetNextFileName()
         {
             IEnumerable<string> availableFiles = repository.ListAllFiles();
 
             if (!availableFiles.Any())
             {
+                currentFile = null;
                 throw new FileNotFoundException("No files available!");
             }
 
