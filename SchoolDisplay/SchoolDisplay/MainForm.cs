@@ -1,5 +1,4 @@
-﻿using PdfiumViewer;
-using System;
+﻿using System;
 using System.Configuration;
 using System.Drawing;
 using System.IO;
@@ -11,23 +10,21 @@ namespace SchoolDisplay
 {
     public partial class MainForm : Form
     {
-        // configuration values
-        readonly string pdfFilePath;
-        readonly int pollingInterval;    // in ms
-        readonly int scrollSpeed;        // in 3px per x ms
-        readonly int pauseTime;          // in ms
+        /* configuration values */
+        readonly string pdfDirectoryPath;
+        readonly int scrollSpeed;           // in 3px per x ms
+        readonly int pauseTime;             // in ms
+        readonly int errorDisplayDelay;      // in ms
+        readonly int emptyPollingDelay;  // in ms
 
-        // true if a PDF file is currently displayed, false if not
-        bool pdfOnScreen = false;
+        bool pdfOnScreen = false;       // true if a PDF file is currently displayed, false if not
         int scrollTop = 0;              // Keep track of scroll height
 
-        // Environment.TickCount value of last polling event
-        int lastPolling = 0;
-
         Timer clockTimer;
-        Timer pollingTimer;             // only used in pdf loading error state
+        Timer retryTimer;
         Timer scrollTimer;
-        FileSystemWatcher fsWatcher;
+
+        readonly CyclicPdfService pdfService;
 
         public MainForm()
         {
@@ -38,31 +35,35 @@ namespace SchoolDisplay
 
             try
             {
-                pdfFilePath = GetSettingsString("PdfFilePath");
-                pollingInterval = GetNonNegativeSettingsInt("PollingInterval") * 1000;
+                // TODO: Move settings methods to SettingsHelper class, enforce times to be not 0
+                pdfDirectoryPath = GetSettingsString("PdfDirectoryPath");
                 scrollSpeed = GetNonNegativeSettingsInt("ScrollSpeed");
                 pauseTime = GetNonNegativeSettingsInt("PauseTime");
+                errorDisplayDelay = GetNonNegativeSettingsInt("ErrorDisplayDelay");
+                emptyPollingDelay = GetNonNegativeSettingsInt("EmptyPollingDelay");
             }
             catch (BadConfigException ex)
             {
                 ShowError(ex.Message);
                 return;
             }
-
-            SetupScrollTimer();
-            LoadPdf();
 
             try
             {
-                SetupFileSystemWatcher();
+                pdfService = new CyclicPdfService(new PdfRepository(pdfDirectoryPath));
             }
-            catch (BadConfigException ex)
+            catch (DirectoryNotFoundException)
             {
-                ShowError(ex.Message);
+                ShowError(Properties.Resources.InvalidPathError);
                 return;
             }
 
-            SetupPollingTimer();
+            pdfService.OnInvalidate += PdfService_OnInvalidate;
+
+            SetupRetryTimer();
+            SetupScrollTimer();
+
+            LoadNextPdf();
         }
 
         private void SetupForm()
@@ -137,38 +138,69 @@ namespace SchoolDisplay
             }
             else
             {
-                throw new BadConfigException(String.Format(Properties.Resources.ConfigInvalidValueError, name));
+                throw new BadConfigException(string.Format(Properties.Resources.ConfigInvalidValueError, name));
             }
         }
 
-        private void LoadPdf()
+        private void LoadNextPdf()
         {
-            // create a copy in RAM to not keep the file open
-            MemoryStream pdfCopy = new MemoryStream();
+            retryTimer.Stop();
 
             try
             {
-                using (FileStream fs = File.OpenRead(pdfFilePath))
-                {
-                    fs.CopyTo(pdfCopy);
-                }
-
-                PdfDocument document = PdfDocument.Load(pdfCopy);
-                pdfRenderer.Load(document);
+                pdfRenderer.Load(pdfService.GetNextDocument());
             }
-            catch
+            catch (FileNotFoundException)
             {
-                // Since a lot of unexcepted Exceptions can happen when opening a PDF file,
-                // we exceptionally catch all of them here for maximum reliability.
+                // no PDF file available
+                ShowError(Properties.Resources.NoAnnouncementsAvailable);
 
-                // This is a general error message because we don't want to display technical details publicly.
-                ShowError(Properties.Resources.PdfAccessError);
+                StartRetryTimer(emptyPollingDelay);
                 return;
             }
+            catch (PdfAccessException e)
+            {
+                // something else went wrong when opening an existing PDF file.
+                string fileName = e.Data.Contains("fileName") ? (string)e.Data["fileName"] : "unknown";
+
+                ShowError(string.Format(Properties.Resources.PdfAccessError, fileName));
+
+                StartRetryTimer(errorDisplayDelay);
+                return;
+            }
+
+            // everything went fine!
 
             ResetAndStartScrollTimer();
 
             HideError();
+        }
+
+        private void SetupRetryTimer()
+        {
+            retryTimer = new Timer();
+            retryTimer.Tick += RetryTimer_Tick;
+            // do not enable timer: LoadNextPdf will do that when an error occurs
+        }
+
+        private void StartRetryTimer(int interval)
+        {
+            retryTimer.Interval = interval;
+            retryTimer.Start();
+        }
+
+        private void RetryTimer_Tick(object sender, EventArgs e)
+        {
+            LoadNextPdf();
+        }
+
+        private void PdfService_OnInvalidate(object sender, EventArgs e)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                // run on UI thread
+                LoadNextPdf();
+            });
         }
 
         private void SetupScrollTimer()
@@ -176,78 +208,13 @@ namespace SchoolDisplay
             scrollTimer = new Timer();
             scrollTimer.Tick += ScrollOneLine;
             scrollTimer.Interval = scrollSpeed;
-            // do not enable timer: loadPdf will trigger that with ResetAndStartScrollTimer()
+            // do not enable timer: LoadNextPdf will trigger that with ResetAndStartScrollTimer()
         }
 
         private void ResetAndStartScrollTimer()
         {
             scrollTop = 0;
             scrollTimer.Start();
-        }
-
-        private void SetupFileSystemWatcher()
-        {
-            try
-            {
-                fsWatcher = new FileSystemWatcher(Path.GetDirectoryName(pdfFilePath), Path.GetFileName(pdfFilePath));
-            }
-            catch (Exception ex)
-            {
-                if (ex is ArgumentException
-                    || ex is ArgumentNullException
-                    || ex is PathTooLongException)
-                {
-                    throw new BadConfigException(Properties.Resources.InvalidPathError);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            fsWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName;
-
-            fsWatcher.Changed += FsWatcher_OnChanged;
-            fsWatcher.Created += FsWatcher_OnChanged;
-            fsWatcher.Renamed += FsWatcher_OnChanged;
-            fsWatcher.Deleted += FsWatcher_OnChanged;
-
-            // events will run in the UI thread
-            fsWatcher.SynchronizingObject = this;
-            fsWatcher.EnableRaisingEvents = true;
-        }
-
-        private void SetupPollingTimer()
-        {
-            if (pollingInterval == 0)
-            {
-                // polling disabled
-                return;
-            }
-
-            pollingTimer = new Timer();
-            pollingTimer.Interval = pollingInterval;
-            pollingTimer.Tick += PollingTimer_Tick;
-            // do not enable timer: pollingTimer is only used in case of an error
-        }
-
-        private async void FsWatcher_OnChanged(Object source, FileSystemEventArgs e)
-        {
-            // loading the PDF just after the file was changed can fail if write is not completed -> wait 2 sec,
-            // if loading failes anyway, reloading will be handled by pollingTimer.
-            await Task.Delay(2000);
-            LoadPdf();
-        }
-
-        private void PollingTimer_Tick(object sender, EventArgs e)
-        {
-            DoPolling();
-        }
-
-        private void DoPolling()
-        {
-            lastPolling = Environment.TickCount;
-            LoadPdf();
         }
 
         private void ShowError(string text)
@@ -257,12 +224,6 @@ namespace SchoolDisplay
             lblErrors.Visible = true;
 
             pdfOnScreen = false;
-
-            // pollingTimer will be null if there is a config error
-            if (pollingTimer != null)
-            {
-                pollingTimer.Enabled = true;
-            }
         }
 
         private void HideError()
@@ -271,28 +232,6 @@ namespace SchoolDisplay
             pdfRenderer.Visible = true;
 
             pdfOnScreen = true;
-
-            if (pollingTimer != null)
-            {
-                // when scrolling is active, we handle polling in JumpUpOrReload instead of PollingTimer_Tick.
-                pollingTimer.Enabled = false;
-            }
-        }
-
-        private void JumpUpOrReload()
-        {
-            // this is overflow-safe! Environment.TickCount will overflow after around 50 days.
-            if (pollingInterval > 0 && Environment.TickCount - lastPolling >= pollingInterval)
-            {
-                DoPolling();
-            }
-            else
-            {
-                // jump up
-                scrollTop = 0;
-                pdfRenderer.SetDisplayRectLocation(new Point(1, scrollTop));
-                ResetAndStartScrollTimer();
-            }
         }
 
         private async void ScrollOneLine(object sender, EventArgs e)
@@ -316,10 +255,10 @@ namespace SchoolDisplay
                 return;
             }
 
-            // Sleep and jump back up
+            // Sleep and load next PDF
             scrollTimer.Stop();
             await Task.Delay(pauseTime);
-            JumpUpOrReload();
+            LoadNextPdf();
         }
     }
 }
