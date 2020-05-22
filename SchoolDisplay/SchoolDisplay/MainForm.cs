@@ -14,8 +14,8 @@ namespace SchoolDisplay
         readonly string pdfDirectoryPath;
         readonly int scrollSpeed;           // in 3px per x ms
         readonly int pauseTime;             // in ms
-        readonly int errorDisplayTime;      // in ms
-        readonly int emptyPollingInterval;  // in ms
+        readonly int errorDisplayDelay;      // in ms
+        readonly int emptyPollingDelay;  // in ms
 
         bool pdfOnScreen = false;       // true if a PDF file is currently displayed, false if not
         int scrollTop = 0;              // Keep track of scroll height
@@ -39,8 +39,8 @@ namespace SchoolDisplay
                 pdfDirectoryPath = GetSettingsString("PdfDirectoryPath");
                 scrollSpeed = GetNonNegativeSettingsInt("ScrollSpeed");
                 pauseTime = GetNonNegativeSettingsInt("PauseTime");
-                errorDisplayTime = GetNonNegativeSettingsInt("ErrorDisplayTime");
-                emptyPollingInterval = GetNonNegativeSettingsInt("EmptyPollingInterval");
+                errorDisplayDelay = GetNonNegativeSettingsInt("ErrorDisplayDelay");
+                emptyPollingDelay = GetNonNegativeSettingsInt("EmptyPollingDelay");
             }
             catch (BadConfigException ex)
             {
@@ -155,24 +155,17 @@ namespace SchoolDisplay
                 // no PDF file available
                 ShowError(Properties.Resources.NoAnnouncementsAvailable);
 
-                retryTimer.Interval = emptyPollingInterval;
-                retryTimer.Start();
+                StartRetryTimer(emptyPollingDelay);
                 return;
             }
             catch (PdfAccessException e)
             {
                 // something else went wrong when opening an existing PDF file.
-                string fileName = "unknown";
-
-                if (e.Data.Contains("fileName"))
-                {
-                    fileName = (string)e.Data["fileName"];
-                }
+                string fileName = e.Data.Contains("fileName") ? (string)e.Data["fileName"] : "unknown";
 
                 ShowError(string.Format(Properties.Resources.PdfAccessError, fileName));
 
-                retryTimer.Interval = errorDisplayTime;
-                retryTimer.Start();
+                StartRetryTimer(errorDisplayDelay);
                 return;
             }
 
@@ -187,8 +180,13 @@ namespace SchoolDisplay
         {
             retryTimer = new Timer();
             retryTimer.Tick += RetryTimer_Tick;
-            retryTimer.Interval = errorDisplayTime;
             // do not enable timer: LoadNextPdf will do that when an error occurs
+        }
+
+        private void StartRetryTimer(int interval)
+        {
+            retryTimer.Interval = interval;
+            retryTimer.Start();
         }
 
         private void RetryTimer_Tick(object sender, EventArgs e)

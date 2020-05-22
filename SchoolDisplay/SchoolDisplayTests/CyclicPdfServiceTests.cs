@@ -92,7 +92,7 @@ namespace SchoolDisplay.Tests
         [ExpectedException(typeof(FileNotFoundException))]
         public void NoFilesTest()
         {
-            var repo = new FakePdfRepository(new List<string>());
+            var repo = new FakePdfRepository(GetDummyFileList(0));
             var service = new CyclicPdfService(repo);
 
             service.GetNextDocument();
