@@ -11,11 +11,16 @@ namespace SchoolDisplayTests
     {
         public event EventHandler<ChangedPdfEventArgs> DataChanged;
 
-        public IEnumerable<string> FileList { get; set; }
+        public List<string> FileList { get; set; }
 
-        public FakePdfRepository(IEnumerable<string> fileList)
+        public FakePdfRepository(List<string> fileList)
         {
             FileList = fileList;
+        }
+
+        public void RaiseDataChangedEvent(ChangedPdfEventArgs args)
+        {
+            DataChanged?.Invoke(this, args);
         }
 
         public IPdfDocument GetDocument(string fileName)
