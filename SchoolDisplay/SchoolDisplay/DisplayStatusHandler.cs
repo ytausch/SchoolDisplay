@@ -82,7 +82,7 @@ namespace SchoolDisplay
             var date = DateTime.Now;
             var now = date.TimeOfDay;
 
-            if ((date.DayOfWeek == DayOfWeek.Saturday) || (date.DayOfWeek == DayOfWeek.Sunday) && !DisplayActiveOnWeekend)
+            if ((date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday) && !DisplayActiveOnWeekend)
             {
                 status = DISPLAY_OFF;
             }
