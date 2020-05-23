@@ -37,7 +37,7 @@ namespace SchoolDisplay
             if (!AlwaysOn)
             {
                 SetupDisplayTimer();
-                SetDisplayStatus(determineRequiredStatus()); // Set Initial Status
+                SetDisplayStatus(DetermineRequiredStatus()); // Set Initial Status
             }
         }
 
@@ -70,13 +70,13 @@ namespace SchoolDisplay
 
         private void SetRequiredDisplayStatus(Object source, EventArgs e)
         {
-            var requiredStatus = determineRequiredStatus();
+            var requiredStatus = DetermineRequiredStatus();
 
             if (CurrentStatus != requiredStatus)
                 SetDisplayStatus(requiredStatus);
         }
 
-        private int determineRequiredStatus()
+        private int DetermineRequiredStatus()
         {
             var status = DISPLAY_ON;
             var date = DateTime.Now;
