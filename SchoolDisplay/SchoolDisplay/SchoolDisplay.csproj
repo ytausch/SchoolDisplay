@@ -56,13 +56,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DisplayableException.cs" />
     <Compile Include="DisplayStatusHandler.cs" />
     <Compile Include="ChangedPdfEventArgs.cs" />
     <Compile Include="CyclicPdfService.cs" />
     <Compile Include="Exceptions\BadConfigException.cs" />
     <Compile Include="IPdfRepository.cs" />
-    <Compile Include="DisplayStatusHandler.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
