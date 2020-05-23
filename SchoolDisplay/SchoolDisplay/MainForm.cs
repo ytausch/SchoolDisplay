@@ -18,7 +18,7 @@ namespace SchoolDisplay
         readonly int emptyPollingDelay;  // in ms
 
         bool pdfOnScreen = false;       // true if a PDF file is currently displayed, false if not
-        int scrollTop = 0;              // Keep track of scroll height
+        float scrollTop = 0;              // Keep track of scroll height
 
         Timer clockTimer;
         Timer retryTimer;
