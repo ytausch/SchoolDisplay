@@ -76,7 +76,7 @@ namespace SchoolDisplay
                 SetDisplayStatus(requiredStatus);
         }
 
-        private int determineRequiredStatus()
+        private int DetermineRequiredStatus()
         {
             var status = DISPLAY_ON;
             var date = DateTime.Now;
