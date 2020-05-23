@@ -97,7 +97,10 @@ namespace SchoolDisplay
         // Turn display on if program is closed
         ~DisplayStatusHandler()
         {
-            SetDisplayStatus(DISPLAY_ON);
+            if (!AlwaysOn)
+            {
+                SetDisplayStatus(DISPLAY_ON);
+            }
         }
     }
 }
