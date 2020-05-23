@@ -12,13 +12,13 @@ namespace SchoolDisplay
     {
         /* configuration values */
         readonly string pdfDirectoryPath;
-        readonly int scrollSpeed;           // in 3px per x ms
+        readonly float scrollTick;
         readonly int pauseTime;             // in ms
         readonly int errorDisplayDelay;      // in ms
         readonly int emptyPollingDelay;  // in ms
 
         bool pdfOnScreen = false;       // true if a PDF file is currently displayed, false if not
-        int scrollTop = 0;              // Keep track of scroll height
+        float scrollTop = 0;              // Keep track of scroll height
 
         Timer clockTimer;
         Timer retryTimer;
@@ -37,7 +37,7 @@ namespace SchoolDisplay
             {
                 // TODO: Move settings methods to SettingsHelper class, enforce times to be not 0
                 pdfDirectoryPath = GetSettingsString("PdfDirectoryPath");
-                scrollSpeed = GetNonNegativeSettingsInt("ScrollSpeed");
+                scrollTick = (float) GetNonNegativeSettingsInt("ScrollSpeed")/10;
                 pauseTime = GetNonNegativeSettingsInt("PauseTime");
                 errorDisplayDelay = GetNonNegativeSettingsInt("ErrorDisplayDelay");
                 emptyPollingDelay = GetNonNegativeSettingsInt("EmptyPollingDelay");
@@ -207,7 +207,7 @@ namespace SchoolDisplay
         {
             scrollTimer = new Timer();
             scrollTimer.Tick += ScrollOneLine;
-            scrollTimer.Interval = scrollSpeed;
+            scrollTimer.Interval = 5;
             // do not enable timer: LoadNextPdf will trigger that with ResetAndStartScrollTimer()
         }
 
@@ -244,8 +244,8 @@ namespace SchoolDisplay
             }
 
             // Jump one unit
-            scrollTop -= 1;
-            pdfRenderer.SetDisplayRectLocation(new Point(1, scrollTop));
+            scrollTop -= scrollTick;
+            pdfRenderer.SetDisplayRectLocation(new Point(1, (int)Math.Round(scrollTop)));
 
             // Check if end of document is reached
             var currentPos = pdfRenderer.DisplayRectangle.Top;
