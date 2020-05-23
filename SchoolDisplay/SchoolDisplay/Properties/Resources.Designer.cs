@@ -103,6 +103,15 @@ namespace SchoolDisplay.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die No announcements available. ähnelt.
         /// </summary>
+        internal static string NoAnnouncementsAvailable {
+            get {
+                return ResourceManager.GetString("NoAnnouncementsAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error opening &quot;{0}&quot;. ähnelt.
+        /// </summary>
         internal static string PdfAccessError {
             get {
                 return ResourceManager.GetString("PdfAccessError", resourceCulture);
