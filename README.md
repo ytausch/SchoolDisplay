@@ -2,4 +2,4 @@
 
 [![CI](https://github.com/ytausch/SchoolDisplay/workflows/CI/badge.svg)](https://github.com/ytausch/SchoolDisplay/actions)
 
-> A digital bulletin board designed for schools.
+> A easy-to-use digital bulletin board designed for schools.
