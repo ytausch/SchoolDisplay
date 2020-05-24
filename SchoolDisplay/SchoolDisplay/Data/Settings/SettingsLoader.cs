@@ -44,7 +44,7 @@ namespace SchoolDisplay.Data.Settings
         public static TimeSpan GetSettingsTimeFrame(string settingName)
         {
             string s = GetSettingsString(settingName);
-            if (DateTime.TryParseExact(s, "HH:mm", null, DateTimeStyles.None, out DateTime span))
+            if (DateTime.TryParseExact(s, "HH:mm", null, DateTimeStyles.None, out DateTime span) && span.TimeOfDay != TimeSpan.Zero)
                 return span.TimeOfDay;
 
             throw new BadConfigException(String.Format(Properties.Resources.ConfigInvalidValueError, settingName));
