@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Configuration;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,10 +26,10 @@ namespace SchoolDisplay
         bool pdfOnScreen = false;       // true if a PDF file is currently displayed, false if not
         float scrollTop = 0;              // Keep track of scroll height
 
-        Timer clockTimer;
         Timer retryTimer;
         Timer scrollTimer;
-        
+
+        Clock clock;
         DisplayStatusHandler displayStatusHandler;
 
         readonly CyclicPdfService pdfService;
@@ -41,7 +39,7 @@ namespace SchoolDisplay
             InitializeComponent();
 
             SetupForm();
-            SetupClockTimer();
+            clock = new Clock(lblClock);
 
             try
             {
@@ -109,19 +107,6 @@ namespace SchoolDisplay
             {
                 Close();
             }
-        }
-
-        private void SetupClockTimer()
-        {
-            clockTimer = new Timer();
-            clockTimer.Interval = 1000;
-            clockTimer.Tick += ClockTimer_Tick;
-            clockTimer.Start();
-        }
-
-        private void ClockTimer_Tick(Object source, EventArgs e)
-        {
-            lblClock.Text = DateTime.Now.ToString("HH:mm:ss");
         }
 
         private void LoadNextPdf()

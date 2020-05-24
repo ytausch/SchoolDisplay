@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Display\Clock.cs" />
     <Compile Include="Data\Settings\SettingsLoader.cs" />
     <Compile Include="Display\DisplayStatusHandler.cs" />
     <Compile Include="Data\Pdf\ChangedPdfEventArgs.cs" />
