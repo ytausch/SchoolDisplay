@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolDisplay.Data.Pdf;
+using SchoolDisplay.Display;
 using Timer = System.Windows.Forms.Timer;
 
 namespace SchoolDisplay

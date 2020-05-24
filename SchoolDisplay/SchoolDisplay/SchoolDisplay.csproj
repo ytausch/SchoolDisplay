@@ -57,10 +57,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Display\DisplayStatusHandler.cs" />
-    <Compile Include="Data\pdf\ChangedPdfEventArgs.cs" />
-    <Compile Include="Data\pdf\CyclicPdfService.cs" />
+    <Compile Include="Data\Pdf\ChangedPdfEventArgs.cs" />
+    <Compile Include="Data\Pdf\CyclicPdfService.cs" />
     <Compile Include="Exceptions\BadConfigException.cs" />
-    <Compile Include="Data\pdf\IPdfRepository.cs" />
+    <Compile Include="Data\Pdf\IPdfRepository.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,7 +68,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\PdfAccessException.cs" />
-    <Compile Include="Data\pdf\PdfRepository.cs" />
+    <Compile Include="Data\Pdf\PdfRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">
@@ -102,7 +102,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Data\settings\" />
+    <Folder Include="Data\Settings\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
