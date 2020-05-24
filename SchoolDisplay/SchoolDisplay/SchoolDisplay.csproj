@@ -56,6 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Settings\SettingsLoader.cs" />
     <Compile Include="Display\DisplayStatusHandler.cs" />
     <Compile Include="Data\Pdf\ChangedPdfEventArgs.cs" />
     <Compile Include="Data\Pdf\CyclicPdfService.cs" />
@@ -101,9 +102,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\Settings\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

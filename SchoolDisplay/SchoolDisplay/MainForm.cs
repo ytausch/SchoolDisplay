@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolDisplay.Data.Pdf;
+using SchoolDisplay.Data.Settings;
 using SchoolDisplay.Display;
 using Timer = System.Windows.Forms.Timer;
 
@@ -44,16 +45,15 @@ namespace SchoolDisplay
 
             try
             {
-                // TODO: Move settings methods to SettingsHelper class, enforce times to be not 0
-                pdfDirectoryPath = GetSettingsString("PdfDirectoryPath");
-                scrollTick = (float) GetNonNegativeSettingsInt("ScrollSpeed")/10;
-                pauseTime = GetNonNegativeSettingsInt("PauseTime");
-                displayAlwaysOn = GetSettingsBool("DisplayAlwaysOn");
-                displayStartTime = GetSettingsTimeFrame("DisplayStartTime");
-                displayStopTime = GetSettingsTimeFrame("DisplayStopTime");
-                displayOnWeekend = GetSettingsBool("ActiveOnWeekends");
-                errorDisplayDelay = GetNonNegativeSettingsInt("ErrorDisplayDelay");
-                emptyPollingDelay = GetNonNegativeSettingsInt("EmptyPollingDelay");
+                pdfDirectoryPath = SettingsLoader.GetSettingsString("PdfDirectoryPath");
+                scrollTick = (float) SettingsLoader.GetNonNegativeSettingsInt("ScrollSpeed")/10;
+                pauseTime = SettingsLoader.GetNonNegativeSettingsInt("PauseTime");
+                displayAlwaysOn = SettingsLoader.GetSettingsBool("DisplayAlwaysOn");
+                displayStartTime = SettingsLoader.GetSettingsTimeFrame("DisplayStartTime");
+                displayStopTime = SettingsLoader.GetSettingsTimeFrame("DisplayStopTime");
+                displayOnWeekend = SettingsLoader.GetSettingsBool("ActiveOnWeekends");
+                errorDisplayDelay = SettingsLoader.GetNonNegativeSettingsInt("ErrorDisplayDelay");
+                emptyPollingDelay = SettingsLoader.GetNonNegativeSettingsInt("EmptyPollingDelay");
             }
             catch (BadConfigException ex)
             {
@@ -122,57 +122,6 @@ namespace SchoolDisplay
         private void ClockTimer_Tick(Object source, EventArgs e)
         {
             lblClock.Text = DateTime.Now.ToString("HH:mm:ss");
-        }
-
-        private string GetSettingsString(string name)
-        {
-            string s;
-            try
-            {
-                s = ConfigurationManager.AppSettings.Get(name);
-            }
-            catch (ConfigurationException)
-            {
-                throw new BadConfigException(Properties.Resources.ConfigLoadError);
-            }
-
-            if (s == null)
-            {
-                throw new BadConfigException(String.Format(Properties.Resources.ConfigMissingKeyError, name));
-            }
-
-            return s;
-        }
-
-        private int GetNonNegativeSettingsInt(string name)
-        {
-            string s = GetSettingsString(name);
-            if (int.TryParse(s, out int i) && i >= 0)
-            {
-                return i;
-            }
-            else
-            {
-                throw new BadConfigException(string.Format(Properties.Resources.ConfigInvalidValueError, name));
-            }
-        }
-
-        private bool GetSettingsBool(string name)
-        {
-            if (bool.TryParse(GetSettingsString(name), out bool b))
-                return b;
-
-            throw new BadConfigException(String.Format(Properties.Resources.ConfigInvalidValueError, name));
-        }
-
-        private TimeSpan GetSettingsTimeFrame(string name)
-        {
-            string s = GetSettingsString(name);
-            if (DateTime.TryParseExact(s, "HH:mm", null, DateTimeStyles.None, out DateTime span)) { 
-                return span.TimeOfDay;
-            }                
-
-            throw new BadConfigException(String.Format(Properties.Resources.ConfigInvalidValueError, name));
         }
 
         private void LoadNextPdf()
