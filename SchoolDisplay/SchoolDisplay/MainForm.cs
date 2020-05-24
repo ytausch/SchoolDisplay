@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using SchoolDisplay.Data.Pdf;
 using Timer = System.Windows.Forms.Timer;
 
 namespace SchoolDisplay
@@ -24,9 +25,6 @@ namespace SchoolDisplay
 
         bool pdfOnScreen = false;       // true if a PDF file is currently displayed, false if not
         float scrollTop = 0;              // Keep track of scroll height
-
-        // Keeps track of display state
-        bool displayActive = true;
 
         Timer clockTimer;
         Timer retryTimer;
