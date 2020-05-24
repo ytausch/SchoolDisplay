@@ -61,6 +61,7 @@
     <Compile Include="Display\DisplayStatusHandler.cs" />
     <Compile Include="Data\Pdf\ChangedPdfEventArgs.cs" />
     <Compile Include="Data\Pdf\CyclicPdfService.cs" />
+    <Compile Include="Display\Scroller.cs" />
     <Compile Include="Exceptions\BadConfigException.cs" />
     <Compile Include="Data\Pdf\IPdfRepository.cs" />
     <Compile Include="MainForm.cs">

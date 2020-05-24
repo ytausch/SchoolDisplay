@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using SchoolDisplay.Data.Pdf;
 using SchoolDisplay.Data.Settings;
@@ -23,15 +21,11 @@ namespace SchoolDisplay
         readonly TimeSpan displayStopTime;
         readonly bool displayOnWeekend;
 
-        bool pdfOnScreen = false;       // true if a PDF file is currently displayed, false if not
-        float scrollTop = 0;              // Keep track of scroll height
-
         Timer retryTimer;
-        Timer scrollTimer;
 
-        Clock clock;
-        DisplayStatusHandler displayStatusHandler;
-
+        readonly Clock clock;
+        readonly DisplayStatusHandler displayStatusHandler;
+        readonly Scroller scroller;
         readonly CyclicPdfService pdfService;
 
         public MainForm()
@@ -74,7 +68,9 @@ namespace SchoolDisplay
             pdfService.OnInvalidate += PdfService_OnInvalidate;
 
             SetupRetryTimer();
-            SetupScrollTimer();
+
+            scroller = new Scroller(pdfRenderer, scrollTick, pauseTime);
+            scroller.FileEndReached += PdfEndReached;
 
             LoadNextPdf();
         }
@@ -109,6 +105,19 @@ namespace SchoolDisplay
             }
         }
 
+        private void PdfEndReached(object sender, EventArgs e) => LoadNextPdf();
+
+        private void RetryTimer_Tick(object sender, EventArgs e) => LoadNextPdf();
+
+        private void PdfService_OnInvalidate(object sender, EventArgs e)
+        {
+            Invoke((MethodInvoker)delegate
+            {
+                // run on UI thread
+                LoadNextPdf();
+            });
+        }
+
         private void LoadNextPdf()
         {
             retryTimer.Stop();
@@ -137,8 +146,7 @@ namespace SchoolDisplay
             }
 
             // everything went fine!
-
-            ResetAndStartScrollTimer();
+            scroller.Restart();
 
             HideError();
         }
@@ -156,76 +164,19 @@ namespace SchoolDisplay
             retryTimer.Start();
         }
 
-        private void RetryTimer_Tick(object sender, EventArgs e)
-        {
-            LoadNextPdf();
-        }
-
-        private void PdfService_OnInvalidate(object sender, EventArgs e)
-        {
-            Invoke((MethodInvoker)delegate
-            {
-                // run on UI thread
-                LoadNextPdf();
-            });
-        }
-
-        private void SetupScrollTimer()
-        {
-            scrollTimer = new Timer();
-            scrollTimer.Tick += ScrollOneLine;
-            scrollTimer.Interval = 5;
-            // do not enable timer: LoadNextPdf will trigger that with ResetAndStartScrollTimer()
-        }
-
-        private void ResetAndStartScrollTimer()
-        {
-            scrollTop = 0;
-            scrollTimer.Start();
-        }
-
         private void ShowError(string text)
         {
             pdfRenderer.Visible = false;
             lblErrors.Text = text;
             lblErrors.Visible = true;
 
-            pdfOnScreen = false;
+            scroller.Stop();
         }
 
         private void HideError()
         {
             lblErrors.Visible = false;
             pdfRenderer.Visible = true;
-
-            pdfOnScreen = true;
-        }
-
-        private async void ScrollOneLine(object sender, EventArgs e)
-        {
-            // Check if pdf loaded successfully
-            if (!pdfOnScreen)
-            {
-                scrollTimer.Stop();
-                return;
-            }
-
-            // Jump one unit
-            scrollTop -= scrollTick;
-            pdfRenderer.SetDisplayRectLocation(new Point(1, (int)Math.Round(scrollTop)));
-
-            // Check if end of document is reached
-            var currentPos = pdfRenderer.DisplayRectangle.Top;
-            var documentHeight = pdfRenderer.DisplayRectangle.Height - pdfRenderer.Height;
-            if (Math.Abs(currentPos) != documentHeight)
-            {
-                return;
-            }
-
-            // Sleep and load next PDF
-            scrollTimer.Stop();
-            await Task.Delay(pauseTime);
-            LoadNextPdf();
         }
     }
 }
