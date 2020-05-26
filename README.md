@@ -17,7 +17,7 @@ SchoolDisplay is a fully featured digital bulletin board - for example for use i
 
 ## Getting Started
 ### Prerequisites
-* Operating System: **Microsoft Windows** (Windows 10 is recommended)
+* Operating System: **Windows 7 or higher** (recommended: Windows 10)
 * [**.NET Framework 4.8**](https://dotnet.microsoft.com/download/dotnet-framework/thank-you/net48-web-installer) ([preinstalled on some versions of Windows 10](https://docs.microsoft.com/en-us/dotnet/framework/get-started/system-requirements))
 
 ### Installation
