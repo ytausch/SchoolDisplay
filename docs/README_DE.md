@@ -24,5 +24,5 @@ SchoolDisplay ist eine Windows-Anwendung, die nacheinander und wiederholend alle
 ## Installation
 ### Systemvoraussetzungen
 * Betriebssystem: **Windows 7 oder höher** (empfohlen: Windows 10)
-* [**.NET Framework 4.8**](https://dotnet.microsoft.com/download/dotnet-framework/thank-you/net48-web-installer): Es handelt sich hierbei um eine Laufzeitumgebung, die zwingend benötigte Bibliotheken und Systemschnittstellen bereitstellt. Das .NET Framework in der Version 4.8 ist in manchen Windows 10-Versionen [bereits enthalten](https://docs.microsoft.com/de-de/dotnet/framework/get-started/system-requirements#installation-requirements).
+* [**.NET Framework 4.8**](https://dotnet.microsoft.com/download/dotnet-framework/thank-you/net48-web-installer): Es handelt sich hierbei um eine Laufzeitumgebung, die zwingend benötigte Bibliotheken und Systemschnittstellen bereitstellt. Das .NET Framework in der Version 4.8 ist in manchen Windows 10-Versionen [bereits standardmäßig enthalten](https://docs.microsoft.com/de-de/dotnet/framework/get-started/system-requirements#installation-requirements).
 
