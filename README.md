@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ytausch/SchoolDisplay/workflows/CI/badge.svg)](https://github.com/ytausch/SchoolDisplay/actions)
 
-:de: **Ein deutsches Handbuch ist [hier](docs/README_DE.md) verfügbar.**
+**Ein deutsches Handbuch ist [hier](docs/README_DE.md) verfügbar.**
 
 An easy-to-use digital bulletin board designed for schools.
 
