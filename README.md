@@ -2,9 +2,9 @@
 
 [![CI](https://github.com/ytausch/SchoolDisplay/workflows/CI/badge.svg)](https://github.com/ytausch/SchoolDisplay/actions)
 
-**Ein ausführliches deutsches Handbuch ist [hier](docs/README_DE.md) verfügbar.**
+> An easy-to-use digital bulletin board designed for schools.
 
-An easy-to-use digital bulletin board designed for schools.
+**Ein ausführliches deutsches Handbuch ist [hier](docs/README_DE.md) verfügbar.**
 
 ![Banner](docs/assets/banner.png)
 
