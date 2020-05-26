@@ -6,7 +6,7 @@
 
 ![Demo-Bild](assets/banner.png)
 
-## Programmbeschreibung
+## Funktionsbeschreibung
 
 ### Was ist "SchoolDisplay"?
 
