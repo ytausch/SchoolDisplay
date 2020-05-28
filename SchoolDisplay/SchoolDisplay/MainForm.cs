@@ -11,20 +11,17 @@ namespace SchoolDisplay
     public partial class MainForm : Form
     {
         
-        Timer retryTimer;
-
-        readonly Clock clock;
-        readonly DisplayStatusHandler displayStatusHandler;
-        readonly Scroller scroller;
-        readonly CyclicPdfService pdfService;
-        readonly Settings settings;
+        private Timer retryTimer;
+        private readonly Scroller scroller;
+        private readonly CyclicPdfService pdfService;
+        private readonly Settings settings;
 
         public MainForm()
         {
             InitializeComponent();
 
             SetupForm();
-            clock = new Clock(lblClock);
+            new Clock(lblClock);
 
             try
             {
@@ -36,7 +33,7 @@ namespace SchoolDisplay
                 return;
             }
             
-            displayStatusHandler = new DisplayStatusHandler(this.Handle.ToInt32(), settings.DisplayAlwaysOn, settings.DisplayStartTime, settings.DisplayStopTime, settings.DisplayOnWeekend);
+            new DisplayStatusHandler(this.Handle.ToInt32(), settings.DisplayAlwaysOn, settings.DisplayStartTime, settings.DisplayStopTime, settings.DisplayOnWeekend);
 
             try
             {
