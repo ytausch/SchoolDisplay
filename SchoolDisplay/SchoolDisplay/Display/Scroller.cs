@@ -8,25 +8,23 @@ namespace SchoolDisplay.Display
 {
     class Scroller
     {
-        private readonly PdfRenderer PdfRenderer;
-        private readonly float Unit;
-        private readonly int PauseTime;
+        private readonly PdfRenderer pdfRenderer;
+        private readonly float unit;
+        private readonly int pauseTime;
+        private readonly Timer scrollTimer;
 
         public event EventHandler FileEndReached;
-        private Timer ScrollTimer;
-        private float ScrollTop;
+        private float scrollTop = 0;
 
         public Scroller(PdfRenderer pdfRenderer, float unit, int pauseTime)
         {
-            PdfRenderer = pdfRenderer;
-            Unit = unit;
-            PauseTime = pauseTime;
+            this.pdfRenderer = pdfRenderer;
+            this.unit = unit;
+            this.pauseTime = pauseTime;
 
-            ScrollTop = 0;
-
-            ScrollTimer = new Timer();
-            ScrollTimer.Tick += ScrollOneUnit;
-            ScrollTimer.Interval = 5;
+            scrollTimer = new Timer();
+            scrollTimer.Tick += ScrollOneUnit;
+            scrollTimer.Interval = 5;
         }
 
         private void OnFileEndReached()
@@ -37,32 +35,32 @@ namespace SchoolDisplay.Display
         private async void ScrollOneUnit(object sender, EventArgs e)
         {
             // Jump one unit
-            ScrollTop -= Unit;
-            PdfRenderer.SetDisplayRectLocation(new Point(1, (int)Math.Round(ScrollTop)));
+            scrollTop -= unit;
+            pdfRenderer.SetDisplayRectLocation(new Point(1, (int)Math.Round(scrollTop)));
 
             // Check if end of document is reached
-            var currentPos = PdfRenderer.DisplayRectangle.Top;
-            var documentHeight = PdfRenderer.DisplayRectangle.Height - PdfRenderer.Height;
+            var currentPos = pdfRenderer.DisplayRectangle.Top;
+            var documentHeight = pdfRenderer.DisplayRectangle.Height - pdfRenderer.Height;
             if (Math.Abs(currentPos) != documentHeight)
             {
                 return;
             }
 
             // Sleep and load next PDF
-            ScrollTimer.Stop();
-            await Task.Delay(PauseTime);
+            scrollTimer.Stop();
+            await Task.Delay(pauseTime);
             OnFileEndReached();
         }
 
         public void Stop()
         {
-            ScrollTimer.Stop();
+            scrollTimer.Stop();
         }
 
         public void Restart()
         {
-            ScrollTop = 0;
-            ScrollTimer.Start();
+            scrollTop = 0;
+            scrollTimer.Start();
         }
 
     }
