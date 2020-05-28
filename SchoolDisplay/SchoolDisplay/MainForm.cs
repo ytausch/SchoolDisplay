@@ -10,23 +10,14 @@ namespace SchoolDisplay
 {
     public partial class MainForm : Form
     {
-        /* configuration values */
-        readonly string pdfDirectoryPath;
-        readonly float scrollTick;
-        readonly int pauseTime;             // in ms
-        readonly int errorDisplayDelay;      // in ms
-        readonly int emptyPollingDelay;  // in ms
-        readonly bool displayAlwaysOn;
-        readonly TimeSpan displayStartTime;
-        readonly TimeSpan displayStopTime;
-        readonly bool displayOnWeekend;
-
+        
         Timer retryTimer;
 
         readonly Clock clock;
         readonly DisplayStatusHandler displayStatusHandler;
         readonly Scroller scroller;
         readonly CyclicPdfService pdfService;
+        readonly Settings settings;
 
         public MainForm()
         {
@@ -37,15 +28,7 @@ namespace SchoolDisplay
 
             try
             {
-                pdfDirectoryPath = SettingsLoader.GetSettingsString("PdfDirectoryPath");
-                scrollTick = (float) SettingsLoader.GetNonNegativeSettingsInt("ScrollSpeed")/10;
-                pauseTime = SettingsLoader.GetNonNegativeSettingsInt("PauseTime");
-                displayAlwaysOn = SettingsLoader.GetSettingsBool("DisplayAlwaysOn");
-                displayStartTime = SettingsLoader.GetSettingsTimeFrame("DisplayStartTime");
-                displayStopTime = SettingsLoader.GetSettingsTimeFrame("DisplayStopTime");
-                displayOnWeekend = SettingsLoader.GetSettingsBool("ActiveOnWeekends");
-                errorDisplayDelay = SettingsLoader.GetNonNegativeSettingsInt("ErrorDisplayDelay");
-                emptyPollingDelay = SettingsLoader.GetNonNegativeSettingsInt("EmptyPollingDelay");
+                settings = new Settings();
             }
             catch (BadConfigException ex)
             {
@@ -53,11 +36,11 @@ namespace SchoolDisplay
                 return;
             }
             
-            displayStatusHandler = new DisplayStatusHandler(this.Handle.ToInt32(), displayAlwaysOn, displayStartTime, displayStopTime, displayOnWeekend);
+            displayStatusHandler = new DisplayStatusHandler(this.Handle.ToInt32(), settings.DisplayAlwaysOn, settings.DisplayStartTime, settings.DisplayStopTime, settings.DisplayOnWeekend);
 
             try
             {
-                pdfService = new CyclicPdfService(new PdfRepository(pdfDirectoryPath));
+                pdfService = new CyclicPdfService(new PdfRepository(settings.PdfDirectoryPath));
             }
             catch (DirectoryNotFoundException)
             {
@@ -69,7 +52,7 @@ namespace SchoolDisplay
 
             SetupRetryTimer();
 
-            scroller = new Scroller(pdfRenderer, scrollTick, pauseTime);
+            scroller = new Scroller(pdfRenderer, settings.ScrollTick, settings.PauseTime);
             scroller.FileEndReached += PdfEndReached;
 
             LoadNextPdf();
@@ -131,7 +114,7 @@ namespace SchoolDisplay
                 // no PDF file available
                 ShowError(Properties.Resources.NoAnnouncementsAvailable);
 
-                StartRetryTimer(emptyPollingDelay);
+                StartRetryTimer(settings.EmptyPollingDelay);
                 return;
             }
             catch (PdfAccessException e)
@@ -141,7 +124,7 @@ namespace SchoolDisplay
 
                 ShowError(string.Format(Properties.Resources.PdfAccessError, fileName));
 
-                StartRetryTimer(errorDisplayDelay);
+                StartRetryTimer(settings.ErrorDisplayDelay);
                 return;
             }
 
