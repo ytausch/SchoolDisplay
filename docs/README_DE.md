@@ -39,7 +39,7 @@ SchoolDisplay ist eine Windows-Anwendung, die nacheinander und wiederholend alle
 Laden Sie die aktuellste Version (`SchoolDisplay_x.y.z.zip`) auf der [Release-Seite](https://github.com/ytausch/SchoolDisplay/releases) herunter und entpacken Sie das ZIP-Archiv. Unter Windows 10 können Sie letzteres beispielsweise durch Anwählen der Option "Alle extrahieren" im Rechtsklickmenü des Windows Explorers tun.
 
 ### Kein Installationsprogramm
-SchoolDisplay wird ohne Installationsprogramm ausgeliefert - daher werden auch keine Administratorrechte für die Einrichtung benötigt. Wenn Sie das Archiv an einem wiederauffindbaren Ort (zum Beispiel auf dem Desktop) entpackt haben, sind Sie bereits bereit für den nächsten Schritt.
+SchoolDisplay wird ohne Installationsprogramm ausgeliefert - daher werden auch keine Administratorrechte für die Einrichtung benötigt. Wenn Sie das Archiv an einem wiederauffindbaren Ort (zum Beispiel auf dem Desktop) entpackt haben, sind Sie schon bereit für den nächsten Schritt.
 
 ## Konfiguration
 Bevor Sie SchoolDisplay verwenden können, müssen Sie zunächst die mitgelieferte Konfigurationsdatei `SchoolDisplay.exe.config` anpassen. Öffnen Sie dafür die Datei mit einem Texteditor - sie können beispielsweise das standardmäßig installierte Windows-Programm "Editor" verwenden.
