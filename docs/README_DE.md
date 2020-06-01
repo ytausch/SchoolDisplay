@@ -59,7 +59,7 @@ Dabei steht in jeder Zeile `BEZEICHNUNG`für die Bezeichnung und `WERT` für den
 Wir empfehlen mindestens die Anpassung der mit (\*) markierten Einstellungsmöglichkeiten.
 
 ## Betrieb
-Starten Sie SchoolDisplay durch einen Doppelklick auf `SchoolDisplay.exe`. Die Anwendung lädt dann die erste PDF-Datei aus dem Verzeichnis, das Sie mit `PdfDirectoryPath` spezifiziert haben, und zeigt diese an. Danach fährt SchoolDisplay mit allen weiteren Dokumenten aus dem Verzeichnis in alphabetischer Reihenfolge fort - nach der letzten Datei wird wieder mit der ersten begonnen.
+Starten Sie SchoolDisplay durch einen Doppelklick auf `SchoolDisplay.exe`. Die Anwendung lädt dann die erste PDF-Datei aus dem Verzeichnis, das Sie mit `PdfDirectoryPath` spezifiziert haben, und zeigt ihre Inhalte an. Danach fährt SchoolDisplay mit allen weiteren Dokumenten aus dem Verzeichnis in alphabetischer Reihenfolge fort - nach der letzten Datei wird wieder mit der ersten begonnen.
 
 ### Inhalte verändern
 Möchten Sie die angezeigten Inhalte verändern, müssen Sie nichts weiter tun als die Dateien im PDF-Verzeichnis zu bearbeiten oder auszutauschen. Änderungen werden normalerweise in Echtzeit übernommen.
