@@ -46,10 +46,10 @@ Dabei steht in jeder Zeile `BEZEICHNUNG`für die Bezeichnung und `WERT` für den
 ### Konfigurationsparameter
 | Bezeichnung | Erläuterung | Standardwert |
 | --- | --- | --- |
-| `PdfDirectoryPath`* | Das Verzeichnis, aus dem alle angezieigten PDF-Dokumente bezogen werden. <br> Sie können an dieser Stelle auch sogenannte UNC-Pfade im Format `\\Server\Freigabe` angeben, um eine Windows-Dateifreigabe zu spezifizieren.  | (keiner)     |
+| `PdfDirectoryPath`* | Das Verzeichnis, aus dem alle angezieigten PDF-Dokumente bezogen werden. <br> Sie können an dieser Stelle auch sogenannte UNC-Pfade im Format `\\Server\Freigabe` angeben, um eine Windows-Dateifreigabe zu spezifizieren (empfohlen!).  | (keiner)     |
 | `ScrollSpeed` | Die Scrollgeschwindigkeit - je höher dieser Wert, desto schneller werden die Dokumente von oben nach unten durchgeblättert. Ein Wert zwischen 10 und 40 wird empfohlen, abhängig von Ihrer Bildschirmauflösung und -größe. | 25 |
 | `PauseTime` | Zeit in Millisekunden, die gewartet wird, bevor bei einem fertig angezeigten Dokument zur nächsten Datei gesprungen wird. | 2500 |
-| `DisplayAlwaysOn`* | Soll das Display dauerhaft eingeschaltet werden? (`true` : aktiviert, `false` : deaktiviert) <br> Wird diese Einstellung mit `true`aktiviert, überschreibt dies die nachfolgenden Einstellungen zur Zeitsteuerung. | false |
+| `DisplayAlwaysOn`* | Soll das Display dauerhaft eingeschaltet werden? (aktiviert: `true`, deaktiviert: `false`) <br> Wird diese Einstellung mit `true`aktiviert, überschreibt dies die nachfolgenden Einstellungen zur Zeitsteuerung. | false |
 | `DisplayStartTime`* | Uhrzeit, zu der das Display eingeschaltet werden soll (hh:mm) | 07:00 |
 | `DisplayStopTime`* | Uhrzeit, zu der das Display ausgeschaltet werden soll (hh:mm) | 18:00 |
 | `ActiveOnWeekends` | Soll das Display Samstags und Sonntags auch eingeschaltet sein? (true/false wie oben) | true |
@@ -57,3 +57,9 @@ Dabei steht in jeder Zeile `BEZEICHNUNG`für die Bezeichnung und `WERT` für den
 | `EmptyPollingDelay` | Wie oft soll bei einem leeren PDF-Verzeichnis auf neue Inhalte geprüft werden (in Millisekunden)? <br> *Hinweis: SchoolDisplay erkennt zusätzlich Dateiänderungen in Echtzeit - diese Einstellung greift nur, wenn die Echtzeitprüfung fehlschlägt.* | 30000 |
 
 Wir empfehlen mindestens die Anpassung der mit (\*) markierten Einstellungsmöglichkeiten.
+
+## Betrieb
+Starten Sie SchoolDisplay durch einen Doppelklick auf `SchoolDisplay.exe`. Die Anwendung lädt dann die erste PDF-Datei aus dem Verzeichnis, das Sie mit `PdfDirectoryPath` spezifiziert haben, und zeigt diese an. Danach fährt SchoolDisplay mit allen weiteren Dokumenten aus dem Verzeichnis in alphabetischer Reihenfolge fort - nach der letzten Datei wird wieder mit der ersten begonnen.
+
+### Inhalte verändern
+Möchten Sie die angezeigten Inhalte verändern, müssen Sie nichts weiter tun als die Dateien im PDF-Verzeichnis zu bearbeiten oder auszutauschen. Änderungen werden normalerweise in Echtzeit übernommen.
