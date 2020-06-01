@@ -21,7 +21,7 @@ SchoolDisplay is a fully featured digital bulletin board - not only for use in s
 * Real-time file updates
 * Configuration of scheduled display on/off times
 * Fullscreen mode
-* Clock :clock3:
+* A Clock :clock3:
 
 ## Getting Started
 ### Prerequisites
