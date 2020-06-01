@@ -36,5 +36,5 @@ SchoolDisplay is a fully featured digital bulletin board - not only for use in s
 ### Usage
 Just change the files in your `PdfDirectoryPath` (you should probably use a network share to do that). The screen contents will update in real-time.
 
-## Questions?
-Feel free to [open an issue](https://github.com/ytausch/SchoolDisplay/issues/new).
+## Questions or improvements?
+Feel free to [open an issue](https://github.com/ytausch/SchoolDisplay/issues/new) or a pull request.
