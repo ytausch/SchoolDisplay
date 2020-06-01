@@ -1,11 +1,8 @@
 ﻿using PdfiumViewer;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SchoolDisplay
+namespace SchoolDisplay.Data.Pdf
 {
     public interface IPdfRepository
     {

@@ -56,11 +56,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DisplayStatusHandler.cs" />
-    <Compile Include="ChangedPdfEventArgs.cs" />
-    <Compile Include="CyclicPdfService.cs" />
+    <Compile Include="Data\Settings\Settings.cs" />
+    <Compile Include="Display\Clock.cs" />
+    <Compile Include="Data\Settings\SettingsLoader.cs" />
+    <Compile Include="Display\DisplayStatusHandler.cs" />
+    <Compile Include="Data\Pdf\ChangedPdfEventArgs.cs" />
+    <Compile Include="Data\Pdf\CyclicPdfService.cs" />
+    <Compile Include="Display\Scroller.cs" />
     <Compile Include="Exceptions\BadConfigException.cs" />
-    <Compile Include="IPdfRepository.cs" />
+    <Compile Include="Data\Pdf\IPdfRepository.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -68,7 +72,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Exceptions\PdfAccessException.cs" />
-    <Compile Include="PdfRepository.cs" />
+    <Compile Include="Data\Pdf\PdfRepository.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">
@@ -101,6 +105,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

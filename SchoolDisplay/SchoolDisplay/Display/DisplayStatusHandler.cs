@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using Timer = System.Windows.Forms.Timer;
 
-namespace SchoolDisplay
+namespace SchoolDisplay.Display
 {
     class DisplayStatusHandler
     {
