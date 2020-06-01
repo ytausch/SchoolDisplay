@@ -54,6 +54,6 @@ Dabei steht in jeder Zeile `BEZEICHNUNG`für die Bezeichnung und `WERT` für den
 | `DisplayStopTime`* | Uhrzeit, zu der das Display ausgeschaltet werden soll (hh:mm) | 18:00 |
 | `ActiveOnWeekends` | Soll das Display Samstags und Sonntags auch eingeschaltet sein? (true/false wie oben) | true |
 | `ErrorDisplayDelay` | Verzögerung in Millisekunden bei Anzeige einer PDF-Fehlermeldung. | 5000 |
-| `EmptyPollingDelay` | Wie oft soll bei einem leeren PDF-Verzeichnis auf neue Inhalte geprüft werden (in Millisekunden)? <br> *Hinweis: SchoolDisplay erkennt zusätzlich Dateiänderungen in Echtzeit - diese Einstellung greift nur, wenn die Echtezitprüfung fehlschlägt.* | 30000 |
+| `EmptyPollingDelay` | Wie oft soll bei einem leeren PDF-Verzeichnis auf neue Inhalte geprüft werden (in Millisekunden)? <br> *Hinweis: SchoolDisplay erkennt zusätzlich Dateiänderungen in Echtzeit - diese Einstellung greift nur, wenn die Echtzeitprüfung fehlschlägt.* | 30000 |
 
 Wir empfehlen mindestens die Anpassung der mit (\*) markierten Einstellungsmöglichkeiten.
