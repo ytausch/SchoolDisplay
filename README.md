@@ -12,8 +12,16 @@
 
 This Windows application displays successively and repeatedly all PDF files in a configured directory in full screen mode and scrolls through them from top to bottom. It is also possible to use [UNC paths](https://en.wikipedia.org/wiki/Path_(computing)#Universal_Naming_Convention) that refer to network shares - changes are applied in real-time.
 
-SchoolDisplay is a fully featured digital bulletin board - for example for use in schools.
+SchoolDisplay is a fully featured digital bulletin board - not only for use in schools.
 
+### Features
+* Uses PDF as universal content format
+* Supports network shares as file source
+* Automatic scrolling (customizable speed)
+* Real-time file updates
+* Configuration of scheduled display on/off times
+* Fullscreen mode
+* Clock :clock3:
 
 ## Getting Started
 ### Prerequisites
