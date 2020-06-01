@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace SchoolDisplay
+namespace SchoolDisplay.Data.Pdf
 {
     /// <summary>
     /// A class representing a PDF file storage.
