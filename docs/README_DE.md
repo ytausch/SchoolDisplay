@@ -14,6 +14,15 @@ Mit SchoolDisplay können tagesaktuelle Informationen schnell und effizient eine
 
 SchoolDisplay ist eine Windows-Anwendung, die nacheinander und wiederholend alle PDF-Dokumente eines angegebenen Verzeichnisses im Vollbildmodus anzeigt und jeweils langsam von oben nach unten durchblättert. Änderungen an den Inhalten werden in Echtzeit übernommen.
 
+### Features
+* Nutzt PDF als universelles Inhaltsformat
+* Unterstützt Windows-Dateifreigaben als Datenquelle
+* Automatisches Scrolling mit konfigurierbarer Geschwindigkeit
+* Dateiupdates in Echtzeit
+* Konfigurierbare Display-Zeiten
+* Vollbildmodus
+* Uhrzeitanzeige :clock3:
+
 ### Was benötige ich, um SchoolDisplay einzusetzen?
 
 * Einen öffentlich angebrachten Bildschirm (oder mehrere)
@@ -30,7 +39,7 @@ SchoolDisplay ist eine Windows-Anwendung, die nacheinander und wiederholend alle
 Laden Sie die aktuellste Version (`SchoolDisplay_x.y.z.zip`) auf der [Release-Seite](https://github.com/ytausch/SchoolDisplay/releases) herunter und entpacken Sie das ZIP-Archiv. Unter Windows 10 können Sie letzteres beispielsweise durch Anwählen der Option "Alle extrahieren" im Rechtsklickmenü des Windows Explorers tun.
 
 ### Kein Installationsprogramm
-SchoolDisplay wird nicht mit einem Installationsprogramm ausgeliefert - daher sind auch keine Administratorrechte notwendig. Wenn Sie das Archiv an einem wiederauffindbaren Ort (zum Beispiel auf dem Desktop) entpackt haben, sind Sie bereits bereit für den nächsten Schritt.
+SchoolDisplay wird ohne Installationsprogramm ausgeliefert - daher werden auch keine Administratorrechte für die Einrichtung benötigt. Wenn Sie das Archiv an einem wiederauffindbaren Ort (zum Beispiel auf dem Desktop) entpackt haben, sind Sie bereits bereit für den nächsten Schritt.
 
 ## Konfiguration
 Bevor Sie SchoolDisplay verwenden können, müssen Sie zunächst die mitgelieferte Konfigurationsdatei `SchoolDisplay.exe.config` anpassen. Öffnen Sie dafür die Datei mit einem Texteditor - sie können beispielsweise das standardmäßig installierte Windows-Programm "Editor" verwenden.
