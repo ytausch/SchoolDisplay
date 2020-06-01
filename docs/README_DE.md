@@ -46,7 +46,7 @@ Dabei steht in jeder Zeile `BEZEICHNUNG`für die Bezeichnung und `WERT` für den
 ### Konfigurationsparameter
 | Bezeichnung | Erläuterung | Standardwert |
 | --- | --- | --- |
-| `PdfDirectoryPath`* | Das Verzeichnis, aus dem alle angezieigten PDF-Dokumente bezogen werden. <br> Sie können an dieser Stelle auch sogenannte UNC-Pfade im Format `\\Server\Freigabe` angeben, um eine Windows-Dateifreigabe anzugeben.  | (keiner)     |
+| `PdfDirectoryPath`* | Das Verzeichnis, aus dem alle angezieigten PDF-Dokumente bezogen werden. <br> Sie können an dieser Stelle auch sogenannte UNC-Pfade im Format `\\Server\Freigabe` angeben, um eine Windows-Dateifreigabe zu spezifizieren.  | (keiner)     |
 | `ScrollSpeed` | Die Scrollgeschwindigkeit - je höher dieser Wert, desto schneller werden die Dokumente von oben nach unten durchgeblättert. Ein Wert zwischen 10 und 40 wird empfohlen, abhängig von Ihrer Bildschirmauflösung und -größe. | 25 |
 | `PauseTime` | Zeit in Millisekunden, die gewartet wird, bevor bei einem fertig angezeigten Dokument zur nächsten Datei gesprungen wird. | 2500 |
 | `DisplayAlwaysOn`* | Soll das Display dauerhaft eingeschaltet werden? (`true` : aktiviert, `false` : deaktiviert) <br> Wird diese Einstellung mit `true`aktiviert, überschreibt dies die nachfolgenden Einstellungen zur Zeitsteuerung. | false |
