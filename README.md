@@ -38,3 +38,6 @@ Just change the files in your `PdfDirectoryPath` (you should probably use a netw
 
 ## Questions or improvements?
 Feel free to [open an issue](https://github.com/ytausch/SchoolDisplay/issues/new) or a pull request.
+
+## Licensing
+All used licenses can be found [here](licenses).

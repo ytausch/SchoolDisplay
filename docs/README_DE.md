@@ -75,3 +75,6 @@ Möchten Sie die angezeigten Inhalte verändern, müssen Sie nichts weiter tun a
 
 ## Noch Fragen?
 Bei Fragen und Problemen können Sie [ein Issue erstellen](https://github.com/ytausch/SchoolDisplay/issues/new).
+
+## Lizenzen
+Lizenzen verwendeter Software wurden licences Ordner aufgelistet.
