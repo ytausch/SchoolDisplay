@@ -150,7 +150,10 @@ namespace SchoolDisplay
             lblErrors.Text = text;
             lblErrors.Visible = true;
 
-            scroller.Stop();
+            if (scroller != null)
+            {
+                scroller.Stop();
+            }  
         }
 
         private void HideError()
