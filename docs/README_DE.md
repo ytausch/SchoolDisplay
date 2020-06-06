@@ -76,5 +76,5 @@ Möchten Sie die angezeigten Inhalte verändern, müssen Sie nichts weiter tun a
 ## Noch Fragen?
 Bei Fragen und Problemen können Sie [ein Issue erstellen](https://github.com/ytausch/SchoolDisplay/issues/new).
 
-## Lizenzen
-Lizenzen verwendeter Software wurden licences Ordner aufgelistet.
+## Lizenz
+SchoolDisplay steht unter der freien Apache-2.0-Lizenz, enthält aber Drittsoftwarepakete, für die ggf. andere Lizenzbedingungen gelten. Mehr Informationen stehen unter [LICENSE](../LICENSE) und [NOTICE](../NOTICE) zur Verfügung.
