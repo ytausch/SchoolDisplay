@@ -114,4 +114,9 @@
     <Error Condition="!Exists('..\packages\PdfiumViewer.Native.x86_64.v8-xfa.2018.4.8.256\build\PdfiumViewer.Native.x86_64.v8-xfa.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PdfiumViewer.Native.x86_64.v8-xfa.2018.4.8.256\build\PdfiumViewer.Native.x86_64.v8-xfa.props'))" />
     <Error Condition="!Exists('..\packages\PdfiumViewer.Native.x86.v8-xfa.2018.4.8.256\build\PdfiumViewer.Native.x86.v8-xfa.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\PdfiumViewer.Native.x86.v8-xfa.2018.4.8.256\build\PdfiumViewer.Native.x86.v8-xfa.props'))" />
   </Target>
+  <PropertyGroup>
+    <PostBuildEvent>copy /y $(SolutionDir)..\LICENSE $(ProjectDir)$(OutDir)
+copy /y $(SolutionDir)..\NOTICE $(ProjectDir)$(OutDir)
+xcopy /y $(SolutionDir)..\licenses $(ProjectDir)$(OutDir)licenses\</PostBuildEvent>
+  </PropertyGroup>
 </Project>
