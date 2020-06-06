@@ -1,7 +1,7 @@
 SchoolDisplay
 Copyright (c) 2020 Jannes Kaspar-Müller, Yannik Tausch.
 
-This product contains externally maintained software, namely:
+This product contains parts of externally maintained software, namely:
 - .NET Framework by Microsoft
 - PdfiumViewer (Apache License 2.0)
 - PDFium (Apache License 2.0)
