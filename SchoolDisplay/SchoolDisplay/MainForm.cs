@@ -49,7 +49,7 @@ namespace SchoolDisplay
 
             SetupRetryTimer();
 
-            scroller = new Scroller(pdfRenderer, settings.ScrollTick, settings.PauseTime);
+            scroller = new Scroller(pdfRenderer, settings.ScrollTick, settings.PauseTime, settings.MinDisplayTime);
             scroller.FileEndReached += PdfEndReached;
 
             LoadNextPdf();
