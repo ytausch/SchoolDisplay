@@ -10,7 +10,8 @@ namespace SchoolDisplay.Data.Settings
     {
         public string PdfDirectoryPath { get; }
         public float ScrollTick { get; }
-        public int PauseTime { get; }          
+        public int PauseTime { get; }
+        public int MinDisplayTime { get; }
         public int ErrorDisplayDelay { get; }
         public int EmptyPollingDelay { get; }
         public bool DisplayAlwaysOn { get; }
@@ -23,6 +24,7 @@ namespace SchoolDisplay.Data.Settings
             PdfDirectoryPath = SettingsLoader.GetSettingsString("PdfDirectoryPath");
             ScrollTick = (float)SettingsLoader.GetNonNegativeSettingsInt("ScrollSpeed") / 10;
             PauseTime = SettingsLoader.GetNonNegativeSettingsInt("PauseTime");
+            MinDisplayTime = SettingsLoader.GetNonNegativeSettingsInt("MinDisplayTime");
             DisplayAlwaysOn = SettingsLoader.GetSettingsBool("DisplayAlwaysOn");
             DisplayStartTime = SettingsLoader.GetSettingsTimeFrame("DisplayStartTime");
             DisplayStopTime = SettingsLoader.GetSettingsTimeFrame("DisplayStopTime");

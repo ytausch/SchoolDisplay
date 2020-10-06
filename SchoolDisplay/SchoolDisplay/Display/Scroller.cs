@@ -11,16 +11,19 @@ namespace SchoolDisplay.Display
         private readonly PdfRenderer pdfRenderer;
         private readonly float unit;
         private readonly int pauseTime;
+        private readonly int minDisplayTime;
         private readonly Timer scrollTimer;
 
         public event EventHandler FileEndReached;
         private float scrollTop = 0;
+        private int startTimestamp;
 
-        public Scroller(PdfRenderer pdfRenderer, float unit, int pauseTime)
+        public Scroller(PdfRenderer pdfRenderer, float unit, int pauseTime, int minDisplayTime)
         {
             this.pdfRenderer = pdfRenderer;
             this.unit = unit;
             this.pauseTime = pauseTime;
+            this.minDisplayTime = minDisplayTime;
 
             scrollTimer = new Timer();
             scrollTimer.Tick += ScrollOneUnit;
@@ -48,7 +51,13 @@ namespace SchoolDisplay.Display
 
             // Sleep and load next PDF
             scrollTimer.Stop();
-            await Task.Delay(pauseTime);
+
+            // Make sure that each document is at least for 'minDisplayTime' on the screen, but wait for a minimum of pauseTime
+            // This code is overflow-safe, at least if a single document is not reloaded for more than around 25 days, which should never happen.
+            int timeElapsed = Environment.TickCount - startTimestamp;
+            int delay = Math.Max(pauseTime, minDisplayTime - timeElapsed);
+            await Task.Delay(delay);
+
             OnFileEndReached();
         }
 
@@ -60,6 +69,7 @@ namespace SchoolDisplay.Display
         public void Restart()
         {
             scrollTop = 0;
+            startTimestamp = Environment.TickCount;
             scrollTimer.Start();
         }
 
