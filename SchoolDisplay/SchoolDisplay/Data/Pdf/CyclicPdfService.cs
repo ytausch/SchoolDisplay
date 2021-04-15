@@ -33,6 +33,7 @@ namespace SchoolDisplay.Data.Pdf
         /// If the last file changed in the meantime, allow it to be returned again.
         /// </summary>
         /// <exception cref="FileNotFoundException">If no files are available.</exception>
+        /// <exception cref="DirectoryNotFoundException">If the PDF directory is missing or could not be read (e. g. due to network issues).</exception>
         /// <exception cref="PdfAccessException">If something went wrong while opening a file.</exception>
         public IPdfDocument GetNextDocument()
         {
@@ -49,9 +50,17 @@ namespace SchoolDisplay.Data.Pdf
         }
 
         /// <exception cref="FileNotFoundException">If no files are available.</exception>
+        /// <exception cref="DirectoryNotFoundException">If the PDF directory is missing or could not be read (e. g. due to network issues).</exception>"
         private string GetNextFileName(bool includeCurrentFile = false)
         {
             IEnumerable<string> availableFiles = repository.ListAllFiles();
+
+            if (availableFiles == null)
+            {
+                // connection lost or 
+                currentFile = null;
+                throw new DirectoryNotFoundException("Could not read directory.");
+            }
 
             if (!availableFiles.Any())
             {

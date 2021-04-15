@@ -32,13 +32,27 @@ namespace SchoolDisplay.Data.Pdf
         }
 
         /// <summary>
-        /// Get a IEnumerable of all available PDF files.
+        /// Get an IEnumerable of all available PDF files.
         /// </summary>
-        /// <returns>A string list of PDF file names.</returns>
+        /// <returns>A string list of PDF file names. Null if there were connection or directory issues.</returns>
         public IEnumerable<string> ListAllFiles()
         {
-            // hide implementation details by only returning the filename, not the path.
-            return Directory.EnumerateFiles(directoryPath, "*.pdf").Select(file => Path.GetFileName(file));
+            try
+            {
+                // hide implementation details by only returning the filename, not the path.
+                return Directory.EnumerateFiles(directoryPath, "*.pdf").Select(file => Path.GetFileName(file));
+            }
+            catch (Exception ex)
+            {
+                if (ex is IOException || ex is DirectoryNotFoundException)
+                {
+                    // we probably lost connection to our network share (or somebody deleted the directory...)
+                    return null;
+                }
+
+                throw;
+            }
+            
         }
 
         /// <summary>
