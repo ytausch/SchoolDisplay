@@ -129,6 +129,10 @@ Konnte Konfigurationsdatei nicht laden. Bitte stellen Sie sicher, dass die Konfi
     <value>[Konfigurationsfehler]
 Konfigurationsparameter "{0}" ist nicht vorhanden.</value>
   </data>
+  <data name="DirectoryReadError" xml:space="preserve">
+    <value>Fehler beim Lesen des Verzeichnisses.</value>
+    <comment>This error will be displayed when the PDF directory could not be read.</comment>
+  </data>
   <data name="InvalidPathError" xml:space="preserve">
     <value>[Konfigurationsfehler]
 PDF-Dateipfad ist fehlerhaft.</value>

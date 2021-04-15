@@ -129,6 +129,10 @@ Could not load configuration file. Please make sure that the configuration (.con
     <value>[Configuration Error]
 Configuration key "{0}" is missing.</value>
   </data>
+  <data name="DirectoryReadError" xml:space="preserve">
+    <value>Error reading directory.</value>
+    <comment>This error will be displayed when the PDF directory could not be read.</comment>
+  </data>
   <data name="InvalidPathError" xml:space="preserve">
     <value>[Configuration Error]
 PDF file path is invalid.</value>

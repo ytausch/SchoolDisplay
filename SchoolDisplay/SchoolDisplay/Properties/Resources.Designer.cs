@@ -91,6 +91,15 @@ namespace SchoolDisplay.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error reading directory. ähnelt.
+        /// </summary>
+        internal static string DirectoryReadError {
+            get {
+                return ResourceManager.GetString("DirectoryReadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die [Configuration Error]
         ///PDF file path is invalid. ähnelt.
         /// </summary>

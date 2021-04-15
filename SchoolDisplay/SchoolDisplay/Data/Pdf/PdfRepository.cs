@@ -1,8 +1,10 @@
 ﻿using PdfiumViewer;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace SchoolDisplay.Data.Pdf
 {
@@ -13,6 +15,7 @@ namespace SchoolDisplay.Data.Pdf
     {
         private readonly string directoryPath;
         private readonly FileSystemWatcher fsWatcher;
+        private readonly Timer reconnectTimer;
 
         public event EventHandler<ChangedPdfEventArgs> DataChanged;
 
@@ -24,6 +27,9 @@ namespace SchoolDisplay.Data.Pdf
 
                 fsWatcher = SetupFileSystemWatcher();
                 fsWatcher.EnableRaisingEvents = true;
+
+                reconnectTimer = SetupReconnectTimer();
+                reconnectTimer.Enabled = true;
             }
             else
             {
@@ -32,13 +38,27 @@ namespace SchoolDisplay.Data.Pdf
         }
 
         /// <summary>
-        /// Get a IEnumerable of all available PDF files.
+        /// Get an IEnumerable of all available PDF files.
         /// </summary>
-        /// <returns>A string list of PDF file names.</returns>
+        /// <returns>A string list of PDF file names. Null if there were connection or directory issues.</returns>
         public IEnumerable<string> ListAllFiles()
         {
-            // hide implementation details by only returning the filename, not the path.
-            return Directory.EnumerateFiles(directoryPath, "*.pdf").Select(file => Path.GetFileName(file));
+            try
+            {
+                // hide implementation details by only returning the filename, not the path.
+                return Directory.EnumerateFiles(directoryPath, "*.pdf").Select(file => Path.GetFileName(file));
+            }
+            catch (Exception ex)
+            {
+                if (ex is IOException || ex is DirectoryNotFoundException)
+                {
+                    // we probably lost connection to our network share (or somebody deleted the directory...)
+                    return null;
+                }
+
+                throw;
+            }
+            
         }
 
         /// <summary>
@@ -109,6 +129,36 @@ namespace SchoolDisplay.Data.Pdf
         private void FsWatcher_OnRenamed(Object source, RenamedEventArgs e)
         {
             DataChanged?.Invoke(this, new ChangedPdfEventArgs(e.OldName));
+        }
+
+        private Timer SetupReconnectTimer()
+        {
+            /*
+             * If the PDF directory is set to a network share, FileSystemWatcher will stop raising events
+             * if there is a network drive failure, EVEN IF the connection is restored afterwards. By resetting
+             * FileSystemWatcher regularily, we ensure that we do not lose real-time capabilities in case of a
+             * short network outage.
+             */
+            Timer reconnectTimer = new Timer();
+
+            reconnectTimer.Tick += ReconnectTimer_Tick;
+            reconnectTimer.Interval = 60000;
+
+            return reconnectTimer;
+        }
+
+        private void ReconnectTimer_Tick(object sender, EventArgs e)
+        {
+            fsWatcher.EnableRaisingEvents = false;
+
+            try
+            {
+                fsWatcher.EnableRaisingEvents = true;
+            }
+            catch (FileNotFoundException)
+            {
+                Debug.Print("Could not reset FileSystemWatcher - is the network down?");
+            }
         }
     }
 }

@@ -114,6 +114,14 @@ namespace SchoolDisplay
                 StartRetryTimer(settings.EmptyPollingDelay);
                 return;
             }
+            catch (DirectoryNotFoundException)
+            {
+                // error reading directory
+                ShowError(Properties.Resources.DirectoryReadError);
+
+                StartRetryTimer(settings.EmptyPollingDelay);
+                return;
+            }
             catch (PdfAccessException e)
             {
                 // something else went wrong when opening an existing PDF file.
